@@ -18,13 +18,15 @@ export const createLink = async (values: z.infer<typeof linkFormSchema>) => {
 
     await db.link.create({ data: values })
 
-    revalidatePath('/links')
+    revalidatePath('/links', 'page')
 }
 
 export const editLink = async (id: number, values: z.infer<typeof linkFormSchema>) => {
     'use server';
 
     const link = await db.link.update({ where: { id }, data: values })
+
+    revalidatePath('/links', 'page')
 
     return link;
 }

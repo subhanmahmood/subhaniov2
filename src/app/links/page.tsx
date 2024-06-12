@@ -3,8 +3,6 @@ import { db } from "@/server/db"
 import { Link as DBLink } from "@prisma/client";
 import Link from "next/link";
 
-
-
 export default async function Links() {
     const links = await db.link.findMany()
 
@@ -15,9 +13,16 @@ export default async function Links() {
     }, {} as Record<string, DBLink[]>);
 
     return <>
-        <h1 className="text-lg font-semibold">Hi, I'm Subhan</h1>
+        <div className="flex justify-between">
+            <h1 className="text-lg font-semibold">Hi, I'm Subhan</h1>
+            {/* {session ?
+                <Link href="/api/auth/signout" className="text-gray-500 hover:text-gray-900 transition-colors duration-200 underline">Sign out</Link>
+                :
+                <Link href="/api/auth/signin" className="text-gray-500 hover:text-gray-900 transition-colors duration-200 underline">Sign in</Link>
+            } */}
+        </div>
         <h1 className="text-md text-slate-600">I make videos on the internet sometimes and build projects sometimes. You're probably looking for something you saw in one of my videos or on my website.</h1>
-        <div className='flex gap-4'>
+     <div className='flex gap-4'>
             <Link href="/links/add" className="flex">(<p className="text-gray-500 hover:text-gray-900 transition-colors duration-200 underline">Add</p>)</Link>
         </div>
         {Object.keys(categorizedLinks).map(category => {

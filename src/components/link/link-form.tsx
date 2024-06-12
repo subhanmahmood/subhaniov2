@@ -28,6 +28,7 @@ import Link from 'next/link';
 import { createLink, editLink, getLink, getLinks } from '@/server/actions/link.actions';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation'
+import { revalidatePath, revalidateTag } from 'next/cache';
 
 export const linkFormSchema = z.object({
     name: z.string().min(1),
@@ -82,7 +83,6 @@ export default function LinkForm({ id }: { id?: string }) {
         if (isEditing) {
             editLink(Number(id), values);
         } else {
-
             createLink(values)
         }
         setTimeout(() => {
