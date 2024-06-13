@@ -1,29 +1,42 @@
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+  schemas   = ["public", "auth"]
 }
- 
+
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+model User {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  name  String?
+
+  @@schema("auth")
 }
 
 model Link {
-    id       Int      @id @default(autoincrement())
-    name     String
-    url      String
-    category String
+  id       Int    @id @default(autoincrement())
+  name     String
+  url      String
+  category String
 
-    clicks   LinkClick[]
+  clicks LinkClick[]
 
-    @@index([name])
+  @@index([name])
+  @@schema("public")
 }
 
 model LinkClick {
-    id       Int      @id @default(autoincrement())
-    linkId   Int
-    datetime DateTime @default(now())
+  id       Int      @id @default(autoincrement())
+  linkId   Int
+  datetime DateTime @default(now())
 
-    link     Link     @relation(fields: [linkId], references: [id])
+  link Link @relation(fields: [linkId], references: [id])
 
-    @@index([linkId])
+  @@index([linkId])
+  @@schema("public")
 }

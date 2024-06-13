@@ -2,7 +2,7 @@
 
 import { z } from 'zod';
 import { useForm } from "react-hook-form";
-import { Link as DBLink } from '@prisma/client';
+import { type Link as DBLink } from '@prisma/client';
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { Button } from "@/components/ui/button"
@@ -28,12 +28,12 @@ import Link from 'next/link';
 import { createLink, editLink, getLink, getLinks } from '@/server/actions/link.actions';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation'
-import { revalidatePath, revalidateTag } from 'next/cache';
 
 export const linkFormSchema = z.object({
     name: z.string().min(1),
     url: z.string().min(1),
-    category: z.string(),
+    category: z.string().optional(),
+    addCategory: z.string().optional()
 })
 
 export default function LinkForm({ id }: { id?: string }) {
@@ -51,7 +51,7 @@ export default function LinkForm({ id }: { id?: string }) {
             const dbCategories = Array.from(new Set([...links.map(link => link.category)])).filter(cat => !!cat)
             setCategories(dbCategories)
         }
-        getDbLinks();
+        void getDbLinks();
     }, [setCategories])
 
     const form = useForm<z.infer<typeof linkFormSchema>>({
@@ -75,15 +75,15 @@ export default function LinkForm({ id }: { id?: string }) {
             }
             setLoaded(true);
         }
-        getDBLink();
-    }, [setLink, getLink, id])
+        void getDBLink();
+    }, [setLink, id, form])
 
     const onSubmit = (values: z.infer<typeof linkFormSchema>) => {
         console.log(values)
         if (isEditing) {
-            editLink(Number(id), values);
+            void editLink(Number(id), values);
         } else {
-            createLink(values)
+            void createLink(values)
         }
         setTimeout(() => {
             router.push('/links')
@@ -118,7 +118,7 @@ export default function LinkForm({ id }: { id?: string }) {
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>Category</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select disabled={Boolean(!categories.length)} onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Select a category" />
@@ -126,17 +126,25 @@ export default function LinkForm({ id }: { id?: string }) {
                             </FormControl>
                             <SelectContent>
                                 {categories.map(cat => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)}
-                                <SelectItem value="Other">Other</SelectItem>
                             </SelectContent>
                         </Select>
-                        <FormDescription>
-                            You can manage email addresses in your{" "}
-                            <Link href="/examples/forms">email settings</Link>.
-                        </FormDescription>
-                        <FormMessage />
+
                     </FormItem>
                 )}
             />
+            <p className='text-xs text-slate-500 text-center my-1'>OR</p>
+            <FormField control={form.control} name="addCategory" render={({ field }) => (
+                <FormItem>
+                    <FormControl>
+                        <Input placeholder='Add Category' {...field} />
+                    </FormControl>
+                    <FormDescription>
+                        You can manage email addresses in your{" "}
+                        <Link href="/examples/forms">email settings</Link>.
+                    </FormDescription>
+                    <FormMessage />
+                </FormItem>
+            )} />
             <Button type='submit' className="w-full mt-4">{`${isEditing ? 'Save' : 'Add'} link`}</Button>
         </form>
 

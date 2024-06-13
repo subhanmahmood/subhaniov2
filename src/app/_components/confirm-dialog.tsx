@@ -9,7 +9,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { ReactNode } from "react"
+import { type ReactNode } from "react"
 
 type ConfirmDialogProps = {
     title: string;
