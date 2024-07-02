@@ -11,20 +11,21 @@ export const metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
-
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
-      <body>
-        <TRPCReactProvider>
+      <TRPCReactProvider>
+        <html lang="en">
+          <body>
             {children}
-        </TRPCReactProvider>
-        <Toaster />
-      </body>
+          </body>
+        </html>
+      </TRPCReactProvider>
+      <Toaster />
     </html>
-  );
+  )
 }

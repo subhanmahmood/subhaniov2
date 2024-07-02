@@ -2,7 +2,7 @@
 
 import { z } from 'zod';
 import { useForm } from "react-hook-form";
-import { type Link as DBLink } from '@prisma/client';
+import { type Category, type Link as DBLink } from '@prisma/client';
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { Button } from "@/components/ui/button"
@@ -25,30 +25,29 @@ import {
 import { Input } from "@/components/ui/input"
 
 import Link from 'next/link';
-import { createLink, editLink, getLink, getLinks } from '@/server/actions/link.actions';
+import { createLink, editLink, getCategories, getLink } from '@/server/actions/link.actions';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation'
 
 export const linkFormSchema = z.object({
     name: z.string().min(1),
     url: z.string().min(1),
-    category: z.string().optional(),
+    categoryId: z.string().optional(),
     addCategory: z.string().optional()
 })
 
 export default function LinkForm({ id }: { id?: string }) {
     const [loaded, setLoaded] = useState(false);
     const [link, setLink] = useState<DBLink>()
-    const [categories, setCategories] = useState<string[]>([])
+    const [categories, setCategories] = useState<Category[]>([])
 
-    const isEditing = loaded && !!link;
+    const isEditing = loaded && !!link && id;
 
     const router = useRouter()
 
     useEffect(() => {
         const getDbLinks = async () => {
-            const links = await getLinks()
-            const dbCategories = Array.from(new Set([...links.map(link => link.category)])).filter(cat => !!cat)
+            const dbCategories = await getCategories()
             setCategories(dbCategories)
         }
         void getDbLinks();
@@ -59,14 +58,14 @@ export default function LinkForm({ id }: { id?: string }) {
         defaultValues: {
             name: '',
             url: '',
-            category: ''
+            categoryId: ''
         },
     })
 
     useEffect(() => {
         const getDBLink = async () => {
             if (id) {
-                const link = await getLink(Number(id));
+                const link = await getLink(id);
                 console.log(link)
                 if (link) {
                     setLink(link)
@@ -81,7 +80,7 @@ export default function LinkForm({ id }: { id?: string }) {
     const onSubmit = (values: z.infer<typeof linkFormSchema>) => {
         console.log(values)
         if (isEditing) {
-            void editLink(Number(id), values);
+            void editLink(id, values);
         } else {
             void createLink(values)
         }
@@ -89,8 +88,6 @@ export default function LinkForm({ id }: { id?: string }) {
             router.push('/links')
         }, 500)
     }
-
-
 
     if (!loaded) return <p>Loading</p>
 
@@ -114,7 +111,7 @@ export default function LinkForm({ id }: { id?: string }) {
             )} />
             <FormField
                 control={form.control}
-                name="category"
+                name="categoryId"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>Category</FormLabel>
@@ -125,7 +122,7 @@ export default function LinkForm({ id }: { id?: string }) {
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                                {categories.map(cat => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)}
+                                {categories.map(cat => <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>)}
                             </SelectContent>
                         </Select>
 

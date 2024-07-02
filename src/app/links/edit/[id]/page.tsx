@@ -1,5 +1,5 @@
+import { auth } from "@/auth";
 import LinkForm from "@/components/link/link-form";
-import { createClient } from "@/lib/utils/supabase/server";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -7,10 +7,9 @@ import { redirect } from "next/navigation";
 export default async function EditLink({ params }: { params: { id: string } }) {
     const isEditing = !!params.id;
 
-    const supabase = createClient()
+    const session = await auth();
 
-    const { data, error } = await supabase.auth.getUser()
-    if (error ?? !data?.user) {
+    if (!session) {
         redirect('/login')
     }
 

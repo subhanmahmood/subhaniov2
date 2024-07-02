@@ -1,9 +1,10 @@
 import { env } from '@/env'
-import { login, signup } from '@/server/actions/login'
-import { Label } from '@/components/ui/label';
-import { redirect } from 'next/navigation';         
-import { Input } from '@/components/ui/input';
+import { redirect } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { signIn, providerMap } from "@/auth";
+import { GithubIcon } from 'lucide-react';
+
+
 
 export default function LoginPage({
     searchParams,
@@ -18,13 +19,35 @@ export default function LoginPage({
     }
 
     return (
-        <form className="flex flex-col justify-center gap-2 h-screen">
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" name="email" type="email" required />
-            <Label htmlFor="password">Password</Label>
-            <Input id="password" name="password" type="password" required />
-            <Button formAction={login}>Log in</Button>
-            {env.AUTH_ACCESS_KEY && <Button variant={'outline'} formAction={signup}>Sign up</Button>}
-        </form>
+        <div className="flex flex-col justify-center items-center gap-2 h-screen">
+            {Object.values(providerMap).map((provider) => (
+                <form
+                    key={provider.id}
+                    action={async () => {
+                        "use server"
+                        try {
+                            await signIn(provider.id)
+                        } catch (error) {
+                            // Signin can fail for a number of reasons, such as the user
+                            // not existing, or the user not having the correct role.
+                            // In some cases, you may want to redirect to a custom error
+                            // if (error instanceof AuthError) {
+                            //     return redirect(`${SIGNIN_ERROR_URL}?error=${error.type}`)
+                            // }
+
+                            // Otherwise if a redirects happens NextJS can handle it
+                            // so you can just re-thrown the error and let NextJS handle it.
+                            // Docs:
+                            // https://nextjs.org/docs/app/api-reference/functions/redirect#server-component
+                            throw error
+                        }
+                    }}
+                >
+                    <Button type="submit">
+                        <GithubIcon className="w-4 h-4 mr-2" /> <span>Sign in with {provider.name}</span>
+                    </Button>
+                </form>
+            ))}
+        </div>
     )
 }
