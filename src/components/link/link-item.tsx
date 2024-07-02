@@ -13,14 +13,13 @@ import { Button } from '../ui/button'
 const linkClasses = "text-slate-500 hover:text-slate-900 transition-colors duration-200 underline cursor-pointer"
 
 export default function LinkItem({ name, url, id, session }: DBLink & { session: Session | null }) {
-    const goToLink = async () => {
+
+    const handleClick = async () => {
         await addLinkClick(id)
-        // router.push(url)
-        window.open(url)
     }
 
     return <li>
-        <span onClick={goToLink} className={clsx(linkClasses, "mr-2")}>{name}</span>
+        <Link href={url} target='_blank' onClick={handleClick} className={clsx(linkClasses, "mr-2")}>{name}</Link>
         {session && <>
             <Link href={`/links/edit/${id}`}>(<span className={clsx(linkClasses, "text-slate-900")}>Edit</span>)</Link>
             <ConfirmDialog

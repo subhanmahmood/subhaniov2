@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { SignInButton, SignOutButton } from "@/components/auth/auth-buttons";
+import { SignOutButton } from "@/components/auth/auth-buttons";
 import LinkItem from "@/components/link/link-item";
 import { getLinksByCategory } from "@/server/actions/link.actions";
 import Link from "next/link";
