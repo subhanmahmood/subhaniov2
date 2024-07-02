@@ -1,29 +1,8 @@
-import { auth, signIn, signOut } from "@/auth";
+import { auth } from "@/auth";
+import { SignInButton, SignOutButton } from "@/components/auth/auth-buttons";
 import LinkItem from "@/components/link/link-item";
 import { getLinksByCategory } from "@/server/actions/link.actions";
 import Link from "next/link";
-
-export function SignIn() {
-    return (
-        <form
-            action={async () => {
-                "use server"
-                await signIn("github")
-            }}
-        >
-            <button className="text-gray-500 hover:text-gray-900 transition-colors duration-200 underline" type="submit">Login</button>
-        </form>
-    )
-}
-
-export function SignOut() {
-    return <form action={async () => {
-        "use server"
-        await signOut()
-    }}>
-        <button className="text-gray-500 hover:text-gray-900 transition-colors duration-200 underline" type="submit">Logout</button>
-    </form>
-}
 
 export default async function Links() {
 
@@ -31,13 +10,11 @@ export default async function Links() {
 
     const linkGroups = await getLinksByCategory();
 
-
-
     return <>
 
         <div className="flex justify-between">
             <h1 className="text-lg font-semibold">Hi, I&apos;m Subhan</h1>
-            {session ? <SignOut /> : <SignIn />}
+            {session ? <SignOutButton /> : <SignInButton />}
         </div>
         <h1 className="text-md text-slate-600">I make videos on the internet sometimes and build projects sometimes. You&apos;re probably looking for something you saw in one of my videos or on my website.</h1>
         {session &&
