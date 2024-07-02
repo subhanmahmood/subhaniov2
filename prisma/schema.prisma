@@ -102,7 +102,7 @@ model Link {
   url        String
   categoryId String
   order      Int         @default(autoincrement())
-  category   Category    @relation(fields: [categoryId], references: [id])
+  category   Category    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   clicks     LinkClick[]
 
   @@index([name])
@@ -113,7 +113,7 @@ model LinkClick {
   id       String   @id @default(uuid())
   linkId   String
   datetime DateTime @default(now())
-  link     Link     @relation(fields: [linkId], references: [id])
+  link     Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
 
   @@index([linkId])
   @@schema("public")

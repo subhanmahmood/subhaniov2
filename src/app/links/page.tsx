@@ -16,7 +16,7 @@ export default async function Links() {
             <h1 className="text-lg font-semibold">Hi, I&apos;m Subhan</h1>
             {session && <SignOutButton />}
         </div>
-        <h1 className="text-md text-slate-600">I make videos on the internet sometimes and build projects sometimes. You&apos;re probably looking for something you saw in one of my videos or on my website.</h1>
+        <h1 className="text-md text-slate-600">I make videos on the internet sometimes and build projects sometimes. You&apos;re probably looking for something you saw in one of my videos or on my website. Hopefully you find it below.</h1>
         {session &&
             <div className='flex gap-1'>
                 <Link href="/links/add" className="flex">(<p className="text-gray-500 hover:text-gray-900 transition-colors duration-200 underline">Add</p>)</Link>
