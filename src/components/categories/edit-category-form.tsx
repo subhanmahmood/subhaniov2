@@ -1,5 +1,5 @@
 'use client'
-import SortableItem from '@/app/_components/sortable-item';
+import SortableItem from '@/components/sortable-item';
 import { deleteCategory, getLinksByCategory, updateCategories } from '@/server/actions/link.actions';
 import { DndContext, type DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, arrayMove } from '@dnd-kit/sortable'
@@ -8,7 +8,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { isEqual } from 'lodash'; // Add this import
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
-import ConfirmDialog from '@/app/_components/confirm-dialog';
+import ConfirmDialog from '@/components/confirm-dialog';
 
 type CategoryWithLinks = Category & { links: DBLink[] }
 

@@ -4,7 +4,7 @@ import { type Link as DBLink } from '@prisma/client'
 import clsx from 'clsx'
 import Link from 'next/link'
 
-import ConfirmDialog from '@/app/_components/confirm-dialog'
+import ConfirmDialog from '@/components/confirm-dialog'
 
 import { type Session } from 'next-auth'
 import { Button } from '../ui/button'

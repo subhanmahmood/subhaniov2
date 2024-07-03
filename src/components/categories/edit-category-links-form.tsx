@@ -1,5 +1,5 @@
 'use client'
-import SortableItem from '@/app/_components/sortable-item';
+import SortableItem from '@/components/sortable-item';
 import { getLinks, updateLinks } from '@/server/actions/link.actions';
 import { DndContext, type DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, arrayMove } from '@dnd-kit/sortable'
