@@ -1,6 +1,6 @@
 'use client'
 import SortableItem from '@/components/sortable-item';
-import { deleteCategory, getLinksByCategory, updateCategories } from '@/server/actions/link.actions';
+
 import { DndContext, type DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, arrayMove } from '@dnd-kit/sortable'
 import { type Link as DBLink, type Category } from '@prisma/client';
@@ -9,6 +9,7 @@ import { isEqual } from 'lodash'; // Add this import
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import ConfirmDialog from '@/components/confirm-dialog';
+import { deleteCategoryAction, getCategoriesWithLinksAction, updateCategoriesAction } from '@/server/actions/category.actions';
 
 type CategoryWithLinks = Category & { links: DBLink[] }
 
@@ -20,9 +21,11 @@ export default function EditCategories() {
 
     useEffect(() => {
         const fetchCategories = async () => {
-            const categories = await getLinksByCategory({ includeEmpty: true })
-            setCategories(categories)
-            setInitialCategories(categories)
+            const [categories, error] = await getCategoriesWithLinksAction({})
+            if (categories) {
+                setCategories(categories)
+                setInitialCategories(categories)
+            }
         }
         fetchCategories().catch(error => {
             console.error('Error in fetchCategories:', error)
@@ -52,7 +55,7 @@ export default function EditCategories() {
     const handleSave = async () => {
         const orderedCategories = categories.map((category, i) => ({ ...category, order: i }))
         // You can perform actions here when the order changes
-        await updateCategories(orderedCategories)
+        await updateCategoriesAction(orderedCategories)
 
         setTimeout(() => {
             router.push('/links')
@@ -60,7 +63,7 @@ export default function EditCategories() {
     }
 
     const handleDelete = async (id: string) => {
-        await deleteCategory(id)
+        await deleteCategoryAction({ id })
     }
 
     useEffect(() => {

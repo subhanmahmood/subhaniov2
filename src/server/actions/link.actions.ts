@@ -1,178 +1,99 @@
 'use server'
 
 import { revalidatePath } from "next/cache";
-import { db } from "../db"
-import { type Category, type Link } from "@prisma/client";
-import { type z } from "zod";
-import { type linkFormSchema } from "@/components/link/link-form";
+import { z } from "zod";
+import { authenticatedAction } from "@/lib/safe-action";
+import { addLinkClickUseCase, createLinkUseCase, deleteLinkUseCase, getLinksUseCase, getLinkUseCase, updateLinksUseCase, updateLinkUseCase } from "@/use-cases/links.use-case";
+import { createServerAction } from "zsa";
+import { linkFormSchema } from "@/lib/schema";
 
-async function handleCategory(values: z.infer<typeof linkFormSchema>): Promise<string> {
-    if (values.addCategory) {
-        const existingCategory = await db.category.findUnique({
-            where: { name: values.addCategory }
-        });
 
-        if (existingCategory) {
-            return existingCategory.id;
-        }
 
-        const newCategory = await db.category.create({
-            data: { name: values.addCategory }
-        });
-        return newCategory.id;
-    }
+
+export const updateLinkAction = authenticatedAction.createServerAction().input(z.object({
+    id: z.string(),
+    values: linkFormSchema
+})).handler(async ({ input }) => {
+    const { id, values } = input;
+
+    await updateLinkUseCase(id, values)
+
+    revalidatePath('/links', 'page')
+})
+
+export const createLinkAction = authenticatedAction.createServerAction().input(z.object({
+    values: linkFormSchema
+})).handler(async ({ input }) => {
+    const { values } = input;
+
+    await createLinkUseCase(values)
+
+    revalidatePath('/links', 'page')
+})
+
+
+export const addLinkClickAction = createServerAction().input(z.object({
+    id: z.string()
+})).handler(async ({ input }) => {
+    const { id } = input;
+
+    await addLinkClickUseCase(id)
+
+    revalidatePath
+})
+
+export const getLinksAction = createServerAction().input(z.object({
+    categoryId: z.string().optional()
+})).output(z.array(z.object({
+    id: z.string(),
+    name: z.string(),
+    url: z.string(),
+    categoryId: z.string(),
+    order: z.number()
+}))).handler(async ({ input }) => {
+    const { categoryId } = input;
+
+    const links = await getLinksUseCase({ categoryId })
 
     revalidatePath('/links', 'page')
 
-    return values.categoryId ?? "";
-}
-
-export const addLinkClick = async (id: string) => {
-    'use server';
-
-    await db.linkClick.create({ data: { linkId: id, datetime: new Date() } })
-}
+    return links
+})
 
 
-export const createLink = async (values: z.infer<typeof linkFormSchema>) => {
-    'use server'
+export const deleteLinkAction = authenticatedAction.createServerAction().input(z.object({
+    id: z.string()
+})).handler(async ({ input }) => {
+    const { id } = input;
 
-    const categoryId = await handleCategory(values);
-
-    const valuesToAdd = {
-        name: values.name,
-        url: values.url,
-        categoryId,
-    }
-
-    await db.link.create({ data: valuesToAdd })
-
-    revalidatePath('/links', 'page')
-}
-
-export const editLink = async (id: string, values: z.infer<typeof linkFormSchema>) => {
-    'use server';
-
-    const categoryId = await handleCategory(values);
-
-    const valuesToAdd = {
-        name: values.name,
-        url: values.url,
-        categoryId: categoryId
-    }
-
-    const link = await db.link.update({ where: { id }, data: valuesToAdd })
-
-    revalidatePath('/links', 'page')
-
-    return link;
-}
-
-export const getLinks = async ({ categoryId }: { categoryId?: string } = {}): Promise<Link[]> => {
-    'use server';
-
-    if (categoryId) {
-        const links = await db.link.findMany({ where: { categoryId } });
-        return links;
-    }
-
-    const links = await db.link.findMany();
-
-    return links;
-}
-
-
-export const deleteLink = async (id: string) => {
-    'use server';
-
-    await db.link.delete({ where: { id } })
+    await deleteLinkUseCase(id)
 
     revalidatePath('/links')
-}
+})
 
-export const getLink = async (id: string) => {
-    'use server';
+export const getLinkAction = createServerAction().input(z.object({
+    id: z.string()
+})).output(z.object({
+    id: z.string(),
+    name: z.string(),
+    url: z.string(),
+    categoryId: z.string(),
+    order: z.number(),
+}).nullable()).handler(async ({ input }) => {
+    const { id } = input;
 
-    const link = await db.link.findFirst({ where: { id } });
+    const link = await getLinkUseCase(id)
+
+    revalidatePath('/links', 'page')
 
     return link
-}
+})
 
-export const getCategory = async (id: string) => {
-    'use server';
+export const updateLinksAction = authenticatedAction.createServerAction().input(z.array(z.object({
+    id: z.string(),
+    order: z.number()
+}))).handler(async ({ input }) => {
+    await updateLinksUseCase(input)
 
-    const category = await db.category.findFirst({ where: { id } });
-
-    return category
-}
-
-export const getCategories = async () => {
-    'use server';
-
-    const categories = db.category.findMany({ orderBy: { order: 'asc' } });
-
-    return categories;
-}
-
-export const updateCategories = async (categories: Category[]) => {
-    'use server';
-
-    await db.$transaction(
-        categories.map(category =>
-            db.category.update({
-                where: { id: category.id },
-                data: {
-                    name: category.name,
-                    order: category.order
-                }
-            })
-        )
-    );
-
-    revalidatePath('/links', 'page');
-}
-
-export const updateLinks = async (links: Link[]) => {
-    'use server';
-
-    await db.$transaction(
-        links.map(link => db.link.update({ where: { id: link.id }, data: { order: link.order } }))
-    );
-
-    revalidatePath('/links', 'page');
-}
-
-export const getLinksByCategory = async ({includeEmpty = false}: {includeEmpty?: boolean} = {}) => {
-    'use server';
-    
-    const categoriesWithLinks = await db.category.findMany({
-        where: {
-            links: includeEmpty ? {} : {
-                some: {}
-            }
-        },
-        include: {
-            links: {
-                orderBy: {
-                    order: 'asc'
-                }
-            }
-        },
-        orderBy: {
-            order: 'asc'
-        }
-    });
-    
-    revalidatePath('/links', 'page');
-    
-    return categoriesWithLinks;
-}
-
-export const deleteCategory = async (id: string) => {
-    'use server';
-
-    await db.category.delete({ where: { id } })
-
-    revalidatePath('/categories/edit', 'page');
-    revalidatePath('/links', 'page');
-}
+    revalidatePath('/links', 'page')
+})

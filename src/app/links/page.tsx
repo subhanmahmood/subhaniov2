@@ -1,14 +1,19 @@
 import { auth } from "@/auth";
 import { SignOutButton } from "@/components/auth/auth-buttons";
 import LinkItem from "@/components/link/link-item";
-import { getLinksByCategory } from "@/server/actions/link.actions";
+import { getCategoriesWithLinksAction } from "@/server/actions/category.actions";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export default async function Links() {
 
     const session = await auth()
 
-    const linkGroups = await getLinksByCategory();
+    const [categoriesWithLinks, error] = await getCategoriesWithLinksAction({});
+
+    if (!categoriesWithLinks) {
+        redirect('/links');
+    }
 
     return <>
 
@@ -23,13 +28,13 @@ export default async function Links() {
                 <Link href="/categories/edit" className="flex">(<p className="cursor-pointer text-gray-500 hover:text-gray-900 transition-colors duration-200 underline">Edit Category Order</p>)</Link>
             </div>
         }
-        {linkGroups.map(linkGroup => {
+        {categoriesWithLinks.map(linkGroup => {
             return (
                 <div key={linkGroup.id}>
                     <p className="text-lg">{linkGroup.name}&nbsp;{session && (<Link href={`/categories/edit/${linkGroup.id}`} className="text-gray-500 hover:text-gray-900 transition-colors duration-200 underline">Edit</Link>)}</p>
                     <ul className="list-disc pl-6 text-slate-60">
                         {linkGroup.links.map(link => {
-                            return <LinkItem key={link.id} name={link.name} url={link.url} id={link.id} categoryId={link.categoryId} session={session} order={link.order} />
+                            return <LinkItem key={link.id} name={link.name} url={link.url} id={link.id} session={session} />
                         })}
                     </ul>
                 </div>

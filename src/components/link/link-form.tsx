@@ -25,16 +25,11 @@ import {
 import { Input } from "@/components/ui/input"
 
 import Link from 'next/link';
-import { createLink, editLink, getCategories, getLink } from '@/server/actions/link.actions';
+import { createLinkAction, getLinkAction, updateLinkAction } from '@/server/actions/link.actions';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation'
-
-export const linkFormSchema = z.object({
-    name: z.string().min(1),
-    url: z.string().min(1),
-    categoryId: z.string().optional(),
-    addCategory: z.string().optional()
-})
+import { getCategoriesAction } from '@/server/actions/category.actions';
+import { linkFormSchema } from '@/lib/schema';
 
 export default function LinkForm({ id }: { id?: string }) {
     const [loaded, setLoaded] = useState(false);
@@ -47,8 +42,10 @@ export default function LinkForm({ id }: { id?: string }) {
 
     useEffect(() => {
         const getDbLinks = async () => {
-            const dbCategories = await getCategories()
-            setCategories(dbCategories)
+            const [dbCategories, error] = await getCategoriesAction()
+            if (dbCategories) {
+                setCategories(dbCategories)
+            }
         }
         void getDbLinks();
     }, [setCategories])
@@ -65,7 +62,7 @@ export default function LinkForm({ id }: { id?: string }) {
     useEffect(() => {
         const getDBLink = async () => {
             if (id) {
-                const link = await getLink(id);
+                const [link, error] = await getLinkAction({ id });
                 console.log(link)
                 if (link) {
                     setLink(link)
@@ -77,16 +74,23 @@ export default function LinkForm({ id }: { id?: string }) {
         void getDBLink();
     }, [setLink, id, form])
 
-    const onSubmit = (values: z.infer<typeof linkFormSchema>) => {
-        console.log(values)
-        if (isEditing) {
-            void editLink(id, values);
-        } else {
-            void createLink(values)
+    const onSubmit = async (values: z.infer<typeof linkFormSchema>) => {
+        console.log('Form submitted with values:', values)
+        try {
+            if (isEditing) {
+                await updateLinkAction({ id, values });
+                console.log('Link updated successfully')
+            } else {
+                console.log('Calling createLinkAction')
+                const result = await createLinkAction({ values })
+                console.log('createLinkAction result:', result)
+            }
+            setTimeout(() => {
+                router.push('/links')
+            }, 500)
+        } catch (error) {
+            console.error('Error submitting form:', error)
         }
-        setTimeout(() => {
-            router.push('/links')
-        }, 500)
     }
 
     if (!loaded) return <p>Loading</p>

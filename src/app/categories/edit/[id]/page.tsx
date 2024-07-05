@@ -1,7 +1,8 @@
 import EditCategoryLinks from '@/components/categories/edit-category-links-form';
-import { getCategory } from '@/server/actions/link.actions';
+import { getCategoryAction } from '@/server/actions/category.actions';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 export default async function EditCategory({
     params,
@@ -10,7 +11,15 @@ export default async function EditCategory({
 }) {
     const id = params.id;
 
-    const category = await getCategory(id);
+    const [category, error] = await getCategoryAction({ id });
+
+    if (!category) {
+        redirect('/links');
+    }
+
+    if (error) {
+        redirect('/links');
+    }
 
     return <>
         <div className="flex gap-4 items-center">

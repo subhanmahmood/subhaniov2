@@ -1,6 +1,5 @@
 'use client'
 import SortableItem from '@/components/sortable-item';
-import { getLinks, updateLinks } from '@/server/actions/link.actions';
 import { DndContext, type DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, arrayMove } from '@dnd-kit/sortable'
 import { type Link as DBLink } from '@prisma/client';
@@ -8,6 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { isEqual } from 'lodash'; // Add this import
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import { getLinksAction, updateLinksAction } from '@/server/actions/link.actions';
 
 export default function EditCategoryLinks({ id }: { id: string }) {
     const [initialLinks, setInitialLinks] = useState<DBLink[]>([])
@@ -17,7 +17,7 @@ export default function EditCategoryLinks({ id }: { id: string }) {
 
     useEffect(() => {
         const fetchCategories = async () => {
-            const links = await getLinks({ categoryId: id })
+            const [links, error] = await getLinksAction({ categoryId: id })
             if (links) {
                 setInitialLinks(links)
                 setLinks(links)
@@ -52,7 +52,7 @@ export default function EditCategoryLinks({ id }: { id: string }) {
     const handleSave = async () => {
         const orderedLinks = links.map((link, i) => ({ ...link, order: i }))
         // You can perform actions here when the order changes
-        await updateLinks(orderedLinks)
+        await updateLinksAction(orderedLinks)
 
         setTimeout(() => {
             router.push('/links')
