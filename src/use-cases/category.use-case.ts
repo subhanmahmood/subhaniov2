@@ -1,10 +1,10 @@
 'use server'
 
 import { getCategoryByName } from "@/data-access/category.data-access";
-import { linkFormSchema } from "@/lib/schema";
+import { type linkFormSchema } from "@/lib/schema";
 import { db } from "@/server/db";
-import { Category } from "@prisma/client";
-import { z } from "zod";
+import { type Category } from "@prisma/client";
+import { type z } from "zod";
 import { createServerAction } from "zsa";
 
 export const handleCategory = async ({ values }: { values: z.infer<typeof linkFormSchema> }) => {
@@ -31,8 +31,12 @@ export const getCategoryUseCase = async (id: string) => {
     return category;
 }
 
-export const getCategoriesUseCase = async () => {
-    const categories = await db.category.findMany()
+export const getCategoriesUseCase = async ({ withLinks }: { withLinks?: boolean }) => {
+    const categories = await db.category.findMany({
+        include: {
+            links: withLinks ?? false,
+        }
+    })
     return categories;
 }
 

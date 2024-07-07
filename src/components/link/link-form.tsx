@@ -1,6 +1,5 @@
 "use client"
-
-import { z } from 'zod';
+import { type z } from 'zod';
 import { useForm } from "react-hook-form";
 import { type Category, type Link as DBLink } from '@prisma/client';
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -25,54 +24,36 @@ import {
 import { Input } from "@/components/ui/input"
 
 import Link from 'next/link';
-import { createLinkAction, getLinkAction, updateLinkAction } from '@/server/actions/link.actions';
+import { createLinkAction, updateLinkAction } from '@/server/actions/link.actions';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation'
 import { getCategoriesAction } from '@/server/actions/category.actions';
 import { linkFormSchema } from '@/lib/schema';
 
-export default function LinkForm({ id }: { id?: string }) {
-    const [loaded, setLoaded] = useState(false);
-    const [link, setLink] = useState<DBLink>()
-    const [categories, setCategories] = useState<Category[]>([])
+type Nullable<T> = T | null;
 
-    const isEditing = loaded && !!link && id;
+export default function LinkForm({ id, link, categories }: { id?: string, link?: Nullable<DBLink>, categories?: Nullable<Category[]> }) {
+    const isEditing = !!link && id;
 
     const router = useRouter()
-
-    useEffect(() => {
-        const getDbLinks = async () => {
-            const [dbCategories, error] = await getCategoriesAction()
-            if (dbCategories) {
-                setCategories(dbCategories)
-            }
-        }
-        void getDbLinks();
-    }, [setCategories])
 
     const form = useForm<z.infer<typeof linkFormSchema>>({
         resolver: zodResolver(linkFormSchema),
         defaultValues: {
             name: '',
             url: '',
-            categoryId: ''
+            categoryId: '',
+            addCategory: ''
         },
     })
 
     useEffect(() => {
-        const getDBLink = async () => {
-            if (id) {
-                const [link, error] = await getLinkAction({ id });
-                console.log(link)
-                if (link) {
-                    setLink(link)
-                    form.reset(link)
-                }
-            }
-            setLoaded(true);
+        if (link) {
+            form.reset(link)
         }
-        void getDBLink();
-    }, [setLink, id, form])
+    }, [link])
+
+
 
     const onSubmit = async (values: z.infer<typeof linkFormSchema>) => {
         console.log('Form submitted with values:', values)
@@ -93,7 +74,9 @@ export default function LinkForm({ id }: { id?: string }) {
         }
     }
 
-    if (!loaded) return <p>Loading</p>
+    const addCategoryFieldValue = form.watch('addCategory')
+    const disableCategorySelect = Boolean(addCategoryFieldValue) || !categories
+
 
     return <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -119,19 +102,20 @@ export default function LinkForm({ id }: { id?: string }) {
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>Category</FormLabel>
-                        <Select disabled={Boolean(!categories.length)} onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select disabled={disableCategorySelect} onValueChange={field.onChange} defaultValue={link?.categoryId} >
                             <FormControl>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Select a category" />
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                                {categories.map(cat => <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>)}
+                                {categories?.map(cat => <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>)}
                             </SelectContent>
                         </Select>
 
                     </FormItem>
-                )}
+                )
+                }
             />
             <p className='text-xs text-slate-500 text-center my-1'>OR</p>
             <FormField control={form.control} name="addCategory" render={({ field }) => (
@@ -140,8 +124,7 @@ export default function LinkForm({ id }: { id?: string }) {
                         <Input placeholder='Add Category' {...field} />
                     </FormControl>
                     <FormDescription>
-                        You can manage email addresses in your{" "}
-                        <Link href="/examples/forms">email settings</Link>.
+                        You can create new categories via the field above.
                     </FormDescription>
                     <FormMessage />
                 </FormItem>

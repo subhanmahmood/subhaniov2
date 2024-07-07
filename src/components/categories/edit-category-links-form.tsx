@@ -8,12 +8,15 @@ import { isEqual } from 'lodash'; // Add this import
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { getLinksAction, updateLinksAction } from '@/server/actions/link.actions';
+import { LinkItem } from '../link/link-item';
+import { useSession } from 'next-auth/react';
 
 export default function EditCategoryLinks({ id }: { id: string }) {
     const [initialLinks, setInitialLinks] = useState<DBLink[]>([])
     const [links, setLinks] = useState<DBLink[]>([])
     const [orderHasChanged, setOrderHasChanged] = useState(false)
     const router = useRouter()
+    const { data: session } = useSession()
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -68,9 +71,7 @@ export default function EditCategoryLinks({ id }: { id: string }) {
             <SortableContext items={links}>
                 {links.map((link) => (
                     <SortableItem key={link.id} id={link.id}>
-                        <div className="w-full flex justify-between ml-4">
-                            {link.name}
-                        </div>
+                        <LinkItem name={link.name} url={link.url} id={link.id} session={session} />
                     </SortableItem>
                 ))}
             </SortableContext>

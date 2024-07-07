@@ -1,7 +1,13 @@
 'use client'
 import SortableItem from '@/components/sortable-item';
 
-import { DndContext, type DragEndEvent } from '@dnd-kit/core';
+import {
+    DndContext, KeyboardSensor,
+    MouseSensor,
+    TouchSensor,
+    useSensor,
+    useSensors, type DragEndEvent
+} from '@dnd-kit/core';
 import { SortableContext, arrayMove } from '@dnd-kit/sortable'
 import { type Link as DBLink, type Category } from '@prisma/client';
 import { useCallback, useEffect, useState } from 'react';
@@ -10,27 +16,28 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import ConfirmDialog from '@/components/confirm-dialog';
 import { deleteCategoryAction, getCategoriesWithLinksAction, updateCategoriesAction } from '@/server/actions/category.actions';
+import { Pencil, Trash2 } from 'lucide-react';
+import Link from 'next/link';
 
 type CategoryWithLinks = Category & { links: DBLink[] }
+type Nullable<T> = T | null;
 
-export default function EditCategories() {
-    const [categories, setCategories] = useState<CategoryWithLinks[]>([])
-    const [initialCategories, setInitialCategories] = useState<CategoryWithLinks[]>([])
+
+export default function EditCategories({ dbCategories }: { dbCategories?: Nullable<CategoryWithLinks[]> }) {
+    const [categories, setCategories] = useState<CategoryWithLinks[]>(dbCategories ?? [])
+    const initialCategories = dbCategories ?? []
     const [orderHasChanged, setOrderHasChanged] = useState(false)
     const router = useRouter()
 
-    useEffect(() => {
-        const fetchCategories = async () => {
-            const [categories, error] = await getCategoriesWithLinksAction({})
-            if (categories) {
-                setCategories(categories)
-                setInitialCategories(categories)
-            }
-        }
-        fetchCategories().catch(error => {
-            console.error('Error in fetchCategories:', error)
-        })
-    }, [setCategories])
+    const mouseSensor = useSensor(MouseSensor);
+    const touchSensor = useSensor(TouchSensor);
+    const keyboardSensor = useSensor(KeyboardSensor);
+
+    const sensors = useSensors(
+        mouseSensor,
+        touchSensor,
+        keyboardSensor,
+    );
 
     const reorderItemList = (e: DragEndEvent) => {
         if (!e.over) return;
@@ -70,19 +77,24 @@ export default function EditCategories() {
         setOrderHasChanged(hasOrderChanged());
     }, [categories, hasOrderChanged])
 
-    return <DndContext onDragEnd={reorderItemList}>
+    return <DndContext sensors={sensors} onDragEnd={reorderItemList}>
         <ul className='flex flex-col gap-4 py-2'>
             <SortableContext items={categories}>
                 {categories.map((category) => (
                     <SortableItem key={category.id} id={category.id}>
-                        <div className="w-full flex justify-between ml-4">
+                        <div className="w-full flex items-center justify-between ml-4">
                             <p>{category.name}</p>
-                            <ConfirmDialog
-                                title="Delete Category"
-                                description={`Are you sure you want to delete this category?${category.links.length > 0 ? ` This category has ${category.links.length} link${category.links.length > 1 ? 's' : ''}.` : ''}`}
-                                onConfirm={() => handleDelete(category.id)}>
-                                <Button>Delete</Button>
-                            </ConfirmDialog>
+                            <div className='flex items-center gap-2'>
+                                <Link prefetch={true} href={`/categories/edit/${category.id}`}>
+                                    <Button variant={'outline'}><Pencil className='w-4 h-4' /></Button>
+                                </Link>
+                                <ConfirmDialog
+                                    title="Delete Category"
+                                    description={`Are you sure you want to delete this category?${category.links.length > 0 ? ` This category has ${category.links.length} link${category.links.length > 1 ? 's' : ''}.` : ''}`}
+                                    onConfirm={() => handleDelete(category.id)}>
+                                    <Button variant={'destructive'}><Trash2 className='w-4 h-4' /></Button>
+                                </ConfirmDialog>
+                            </div>
                         </div>
                     </SortableItem>
                 ))}

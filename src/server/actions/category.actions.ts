@@ -20,15 +20,41 @@ export const getCategoryAction = authenticatedAction.createServerAction().input(
     return category;
 })
 
-export const getCategoriesAction = authenticatedAction.createServerAction().output(z.array(z.object({
-    id: z.string(),
-    name: z.string(),
-    order: z.number()
-}))).handler(async () => {
-    const categories = await getCategoriesUseCase()
+export const getCategoriesAction = authenticatedAction.createServerAction()
+  .input(z.object({
+    withLinks: z.boolean()
+  }))
+  .output(z.discriminatedUnion("withLinks", [
+    z.object({
+      withLinks: z.literal(true),
+      categories: z.array(z.object({
+        id: z.string(),
+        name: z.string(),
+        order: z.number(),
+        links: z.array(z.object({
+          id: z.string(),
+          name: z.string(),
+          url: z.string(),
+          order: z.number(),
+          categoryId: z.string()
+        }))
+      }))
+    }),
+    z.object({
+      withLinks: z.literal(false),
+      categories: z.array(z.object({
+        id: z.string(),
+        name: z.string(),
+        order: z.number()
+      }))
+    })
+  ]))
+  .handler(async ({ input }) => {
+    const { withLinks } = input
+    const categories = await getCategoriesUseCase({ withLinks })
 
-    return categories;
-})
+    return { withLinks, categories };
+  })
 
 export const updateCategoriesAction = authenticatedAction.createServerAction().input(z.array(z.object({
     id: z.string(),

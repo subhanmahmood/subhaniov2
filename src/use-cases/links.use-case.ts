@@ -1,9 +1,9 @@
 'use server';
 import { db } from "@/server/db";
-import { z } from "zod";
+import { type z } from "zod";
 import { handleCategory } from "./category.use-case";
-import { Link } from "@prisma/client";
-import { linkFormSchema } from "@/lib/schema";
+import { type Link } from "@prisma/client";
+import { type linkFormSchema } from "@/lib/schema";
 
 export const updateLinkUseCase = async (id: string, values: z.infer<typeof linkFormSchema>) => {
     const categoryId = await handleCategory({ values });

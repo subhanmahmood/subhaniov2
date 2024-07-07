@@ -23,7 +23,7 @@ export default async function EditCategory({
 
     return <>
         <div className="flex gap-4 items-center">
-            <Link href="/links"><ArrowLeft size={20} /></Link>
+            <Link href="/links" prefetch={true}><ArrowLeft size={20} /></Link>
             <h1 className="text-lg font-semibold">Edit {category?.name}</h1>
         </div>
 
