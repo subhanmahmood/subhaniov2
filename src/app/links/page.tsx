@@ -25,8 +25,8 @@ export default async function Links() {
         <h1 className="text-md text-slate-600">I make videos on the internet sometimes and build projects sometimes. You&apos;re probably looking for something you saw in one of my videos or on my website. Hopefully you find it below.</h1>
         {session &&
             <div className='flex gap-2 w-full'>
-                <Button className="w-1/2" variant={'outline'}><Link prefetch={true} href="/links/add" className="flex items-center gap-2"><Plus className="w-4 h-4" /> Add Link</Link></Button>
-                <Button className="w-1/2" variant={'outline'}><Link prefetch={true} href="/categories/edit" className="flex items-center gap-2"><Edit className="w-4 h-4" /> Edit Categories</Link></Button>
+                <Link prefetch={true} href="/links/add" className="w-1/2"><Button className="flex items-center gap-2 w-full" variant={'outline'}><Plus className="w-4 h-4" /> Add Link</Button></Link>
+                <Link prefetch={true} href="/categories/edit" className="w-1/2"><Button className="flex items-center gap-2 w-full" variant={'outline'}><Edit className="w-4 h-4" /> Edit Categories</Button></Link>
             </div>
         }
         {categoriesWithLinks.map(linkGroup => {
