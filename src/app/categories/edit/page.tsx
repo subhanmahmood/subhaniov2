@@ -1,18 +1,22 @@
+import { auth } from '@/auth';
 import EditCategories from '@/components/categories/edit-category-form';
-import { getCategoriesAction } from '@/server/actions/category.actions';
-import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
+import { PageHeader } from '@/components/page-header';
+import { UnauthorizedError } from '@/lib/exception';
+import { getCategoriesWithLinksAction } from '@/server/actions/category.actions';
 
 export default async function EditCategory() {
 
-    const [categoriesActionResult, error] = await getCategoriesAction({ withLinks: true })
+    const session = await auth()
+
+    if (!session) {
+        throw new UnauthorizedError()
+    }
+
+    const [categoriesWithLinks] = await getCategoriesWithLinksAction({ includeEmpty: true})
 
     return <>
-        <div className="flex gap-4 items-center">
-            <Link href="/links" prefetch={true}><ArrowLeft size={20} /></Link>
-            <h1 className="text-lg font-semibold">Edit Categories</h1>
-        </div>
+        <PageHeader title="Edit Categories" />
 
-        <EditCategories dbCategories={categoriesActionResult?.categories} />
+        <EditCategories dbCategories={categoriesWithLinks} />
     </>
 }

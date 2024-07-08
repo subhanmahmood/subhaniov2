@@ -1,36 +1,27 @@
 'use client'
 import SortableItem from '@/components/sortable-item';
-import { DndContext, type DragEndEvent } from '@dnd-kit/core';
+import {
+    type DragEndEvent
+} from '@dnd-kit/core';
 import { SortableContext, arrayMove } from '@dnd-kit/sortable'
-import { type Link as DBLink } from '@prisma/client';
+import { type Category, type Link as DBLink } from '@prisma/client';
 import { useCallback, useEffect, useState } from 'react';
 import { isEqual } from 'lodash'; // Add this import
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
-import { getLinksAction, updateLinksAction } from '@/server/actions/link.actions';
+import { updateLinksAction } from '@/server/actions/link.actions';
 import { LinkItem } from '../link/link-item';
 import { useSession } from 'next-auth/react';
+import { SortableContainer } from '../sortable/sortable-container';
 
-export default function EditCategoryLinks({ id }: { id: string }) {
-    const [initialLinks, setInitialLinks] = useState<DBLink[]>([])
-    const [links, setLinks] = useState<DBLink[]>([])
+type CategoryWithLinks = Category & { links: DBLink[] }
+
+export default function EditCategoryLinks({ category }: { category: CategoryWithLinks }) {
+    const initialLinks = category?.links
+    const [links, setLinks] = useState<DBLink[]>(category?.links)
     const [orderHasChanged, setOrderHasChanged] = useState(false)
     const router = useRouter()
-    const { data: session } = useSession()
-
-    useEffect(() => {
-        const fetchCategories = async () => {
-            const [links, error] = await getLinksAction({ categoryId: id })
-            if (links) {
-                setInitialLinks(links)
-                setLinks(links)
-            }
-        }
-        fetchCategories().catch(error => {
-            console.error('Error in fetchCategories:', error)
-            // Handle error appropriately (e.g., show error message to user)
-        })
-    }, [setInitialLinks, setLinks, id])
+    const { data: session } = useSession();
 
     const reorderItemList = (e: DragEndEvent) => {
         if (!e.over) return;
@@ -66,7 +57,7 @@ export default function EditCategoryLinks({ id }: { id: string }) {
         setOrderHasChanged(hasOrderChanged());
     }, [setOrderHasChanged, hasOrderChanged])
 
-    return <DndContext onDragEnd={reorderItemList}>
+    return <SortableContainer onDragEnd={reorderItemList}>
         <ul className='flex flex-col gap-4 py-2'>
             <SortableContext items={links}>
                 {links.map((link) => (
@@ -77,5 +68,5 @@ export default function EditCategoryLinks({ id }: { id: string }) {
             </SortableContext>
         </ul>
         <Button disabled={!orderHasChanged} onClick={handleSave}>Save</Button>
-    </DndContext>
+    </SortableContainer>
 }

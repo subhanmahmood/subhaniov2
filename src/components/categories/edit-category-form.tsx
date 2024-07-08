@@ -2,11 +2,7 @@
 import SortableItem from '@/components/sortable-item';
 
 import {
-    DndContext, KeyboardSensor,
-    MouseSensor,
-    TouchSensor,
-    useSensor,
-    useSensors, type DragEndEvent
+    type DragEndEvent
 } from '@dnd-kit/core';
 import { SortableContext, arrayMove } from '@dnd-kit/sortable'
 import { type Link as DBLink, type Category } from '@prisma/client';
@@ -15,9 +11,10 @@ import { isEqual } from 'lodash'; // Add this import
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import ConfirmDialog from '@/components/confirm-dialog';
-import { deleteCategoryAction, getCategoriesWithLinksAction, updateCategoriesAction } from '@/server/actions/category.actions';
+import { deleteCategoryAction, updateCategoriesAction } from '@/server/actions/category.actions';
 import { Pencil, Trash2 } from 'lucide-react';
 import Link from 'next/link';
+import { SortableContainer } from '../sortable/sortable-container';
 
 type CategoryWithLinks = Category & { links: DBLink[] }
 type Nullable<T> = T | null;
@@ -25,19 +22,8 @@ type Nullable<T> = T | null;
 
 export default function EditCategories({ dbCategories }: { dbCategories?: Nullable<CategoryWithLinks[]> }) {
     const [categories, setCategories] = useState<CategoryWithLinks[]>(dbCategories ?? [])
-    const initialCategories = dbCategories ?? []
     const [orderHasChanged, setOrderHasChanged] = useState(false)
     const router = useRouter()
-
-    const mouseSensor = useSensor(MouseSensor);
-    const touchSensor = useSensor(TouchSensor);
-    const keyboardSensor = useSensor(KeyboardSensor);
-
-    const sensors = useSensors(
-        mouseSensor,
-        touchSensor,
-        keyboardSensor,
-    );
 
     const reorderItemList = (e: DragEndEvent) => {
         if (!e.over) return;
@@ -53,11 +39,12 @@ export default function EditCategories({ dbCategories }: { dbCategories?: Nullab
     }
 
     const hasOrderChanged = useCallback(() => {
+        const initialCategories = dbCategories ?? []
         return !isEqual(
             categories.map(c => c.id),
             initialCategories.map(c => c.id)
         );
-    }, [categories, initialCategories])
+    }, [categories, dbCategories])
 
     const handleSave = async () => {
         const orderedCategories = categories.map((category, i) => ({ ...category, order: i }))
@@ -77,7 +64,7 @@ export default function EditCategories({ dbCategories }: { dbCategories?: Nullab
         setOrderHasChanged(hasOrderChanged());
     }, [categories, hasOrderChanged])
 
-    return <DndContext sensors={sensors} onDragEnd={reorderItemList}>
+    return <SortableContainer onDragEnd={reorderItemList}>
         <ul className='flex flex-col gap-4 py-2'>
             <SortableContext items={categories}>
                 {categories.map((category) => (
@@ -100,6 +87,7 @@ export default function EditCategories({ dbCategories }: { dbCategories?: Nullab
                 ))}
             </SortableContext>
         </ul>
+
         <Button disabled={!orderHasChanged} onClick={handleSave}>Save</Button>
-    </DndContext>
+    </SortableContainer>
 }

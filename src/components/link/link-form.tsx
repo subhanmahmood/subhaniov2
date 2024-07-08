@@ -23,11 +23,9 @@ import {
 } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 
-import Link from 'next/link';
 import { createLinkAction, updateLinkAction } from '@/server/actions/link.actions';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation'
-import { getCategoriesAction } from '@/server/actions/category.actions';
 import { linkFormSchema } from '@/lib/schema';
 
 type Nullable<T> = T | null;
@@ -51,7 +49,7 @@ export default function LinkForm({ id, link, categories }: { id?: string, link?:
         if (link) {
             form.reset(link)
         }
-    }, [link])
+    }, [link, form])
 
 
 

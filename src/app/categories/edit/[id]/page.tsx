@@ -1,7 +1,8 @@
+import { auth } from '@/auth';
 import EditCategoryLinks from '@/components/categories/edit-category-links-form';
-import { getCategoryAction } from '@/server/actions/category.actions';
-import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
+import { PageHeader } from '@/components/page-header';
+import { UnauthorizedError } from '@/lib/exception';
+import { getCategoryWithLinksAction } from '@/server/actions/category.actions';
 import { redirect } from 'next/navigation';
 
 export default async function EditCategory({
@@ -11,7 +12,13 @@ export default async function EditCategory({
 }) {
     const id = params.id;
 
-    const [category, error] = await getCategoryAction({ id });
+    const session = await auth();
+
+    if (!session) {
+        throw new UnauthorizedError()
+    }
+
+    const [category, error] = await getCategoryWithLinksAction({ id });
 
     if (!category) {
         redirect('/links');
@@ -22,11 +29,8 @@ export default async function EditCategory({
     }
 
     return <>
-        <div className="flex gap-4 items-center">
-            <Link href="/links" prefetch={true}><ArrowLeft size={20} /></Link>
-            <h1 className="text-lg font-semibold">Edit {category?.name}</h1>
-        </div>
+        <PageHeader title={`Edit ${category?.name}`} />
 
-        <EditCategoryLinks id={id} />
+        <EditCategoryLinks category={category} />
     </>
 }

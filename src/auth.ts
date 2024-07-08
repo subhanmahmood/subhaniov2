@@ -3,6 +3,7 @@ import GitHub from 'next-auth/providers/github'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import { db } from './server/db'
 import { type Provider } from 'next-auth/providers'
+import { env } from './env'
 
 const providers: Provider[] = [
     GitHub,
@@ -23,5 +24,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     providers,
     pages: {
         signIn: '/login'
+    },
+    callbacks: {
+        async signIn({ user, account, profile, email, credentials }) {
+            console.log({
+                user,
+                account,
+                profile,
+                email,
+                credentials
+            })
+            return user.email === env.ALLOWED_EMAIL
+        }
     }
 })

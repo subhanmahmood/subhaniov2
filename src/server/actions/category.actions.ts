@@ -2,7 +2,6 @@
 import { authenticatedAction } from "@/lib/safe-action";
 import { deleteCategoryUseCase, getCategoriesUseCase, getCategoriesWithLinksUseCase, getCategoryUseCase, updateCategoriesUseCase } from "@/use-cases/category.use-case";
 import { z } from "zod";
-import { db } from "../db";
 import { revalidatePath } from "next/cache";
 import { createServerAction } from "zsa";
 
@@ -15,46 +14,48 @@ export const getCategoryAction = authenticatedAction.createServerAction().input(
 }).nullable()).handler(async ({ input }) => {
     const { id } = input;
 
-    const category = await getCategoryUseCase(id)
+    const category = await getCategoryUseCase({ id })
 
     return category;
 })
 
-export const getCategoriesAction = authenticatedAction.createServerAction()
-  .input(z.object({
-    withLinks: z.boolean()
-  }))
-  .output(z.discriminatedUnion("withLinks", [
-    z.object({
-      withLinks: z.literal(true),
-      categories: z.array(z.object({
+export const getCategoryWithLinksAction = authenticatedAction.createServerAction().input(z.object({ id: z.string() })).output(z.object({
+    id: z.string(),
+    name: z.string(),
+    order: z.number(),
+    links: z.array(z.object({
         id: z.string(),
         name: z.string(),
+        url: z.string(),
         order: z.number(),
-        links: z.array(z.object({
-          id: z.string(),
-          name: z.string(),
-          url: z.string(),
-          order: z.number(),
-          categoryId: z.string()
-        }))
-      }))
-    }),
-    z.object({
-      withLinks: z.literal(false),
-      categories: z.array(z.object({
-        id: z.string(),
-        name: z.string(),
-        order: z.number()
-      }))
-    })
-  ]))
-  .handler(async ({ input }) => {
-    const { withLinks } = input
-    const categories = await getCategoriesUseCase({ withLinks })
+        categoryId: z.string()
+    }))
+}).nullable()).handler(async ({ input }) => {
+    const categoryWithLinks = await getCategoryUseCase({ id: input.id, withLinks: true });
 
-    return { withLinks, categories };
-  })
+    if (!categoryWithLinks) {
+        return null;
+    }
+
+    return {
+        ...categoryWithLinks,
+        links: categoryWithLinks.links || []
+    };
+})
+
+export const getCategoriesAction = authenticatedAction.createServerAction()
+    .output(
+        z.array(z.object({
+            id: z.string(),
+            name: z.string(),
+            order: z.number()
+        }))
+    )
+    .handler(async () => {
+        const categories = await getCategoriesUseCase({ withLinks: false })
+
+        return categories;
+    })
 
 export const updateCategoriesAction = authenticatedAction.createServerAction().input(z.array(z.object({
     id: z.string(),
@@ -92,3 +93,4 @@ export const deleteCategoryAction = authenticatedAction.createServerAction().inp
     await deleteCategoryUseCase(id)
     revalidatePath('/links', 'page');
 })
+

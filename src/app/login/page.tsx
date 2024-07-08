@@ -1,5 +1,3 @@
-import { env } from '@/env'
-import { redirect } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { signIn, providerMap } from "@/auth";
 import { GithubIcon } from 'lucide-react';
@@ -7,16 +5,10 @@ import { GithubIcon } from 'lucide-react';
 
 
 export default function LoginPage({
-    searchParams,
 }: {
     params: { slug: string };
     searchParams?: Record<string, string | string[] | undefined>;
 }) {
-    const accessKey = searchParams?.accessKey
-
-    if (accessKey !== env.AUTH_ACCESS_KEY) {
-        redirect('/')
-    }
 
     return (
         <div className="flex flex-col justify-center items-center gap-2 h-screen">

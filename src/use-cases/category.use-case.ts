@@ -5,7 +5,6 @@ import { type linkFormSchema } from "@/lib/schema";
 import { db } from "@/server/db";
 import { type Category } from "@prisma/client";
 import { type z } from "zod";
-import { createServerAction } from "zsa";
 
 export const handleCategory = async ({ values }: { values: z.infer<typeof linkFormSchema> }) => {
     'use server'
@@ -26,8 +25,19 @@ export const handleCategory = async ({ values }: { values: z.infer<typeof linkFo
     return values.categoryId ?? "";
 }
 
-export const getCategoryUseCase = async (id: string) => {
-    const category = await db.category.findUnique({ where: { id } })
+export const getCategoryUseCase = async ({ id, withLinks = false }: { id: string, withLinks?: boolean }) => {
+    const category = await db.category.findUnique({
+        where: { id },
+        include: {
+            ...(withLinks ? {
+                links: {
+                    orderBy: {
+                        order: 'asc'
+                    }
+                }
+            } : {})
+        }
+    })
     return category;
 }
 
