@@ -26,9 +26,7 @@ import { Input } from "@/components/ui/input"
 import { createLinkAction, updateLinkAction } from '@/server/actions/link.actions';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation'
-import { linkFormSchema } from '@/lib/schema';
-
-type Nullable<T> = T | null;
+import { linkFormSchema, type Nullable } from '@/lib/schema';
 
 export default function LinkForm({ id, link, categories }: { id?: string, link?: Nullable<DBLink>, categories?: Nullable<Category[]> }) {
     const isEditing = !!link && id;

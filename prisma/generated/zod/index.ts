@@ -28,6 +28,14 @@ export const LinkScalarFieldEnumSchema = z.enum(['id','name','url','categoryId',
 
 export const LinkClickScalarFieldEnumSchema = z.enum(['id','linkId','datetime']);
 
+export const PostTypeScalarFieldEnumSchema = z.enum(['id','name','price','active','order']);
+
+export const DiscountRuleScalarFieldEnumSchema = z.enum(['id','name','discountPercent','createdAt','updatedAt']);
+
+export const QualifyingPostTypeScalarFieldEnumSchema = z.enum(['id','discountRuleId','postTypeId','quantity']);
+
+export const PromotionTypeScalarFieldEnumSchema = z.enum(['id','name','price']);
+
 export const SortOrderSchema = z.enum(['asc','desc']);
 
 export const QueryModeSchema = z.enum(['default','insensitive']);
@@ -155,6 +163,59 @@ export const LinkClickSchema = z.object({
 })
 
 export type LinkClick = z.infer<typeof LinkClickSchema>
+
+/////////////////////////////////////////
+// POST TYPE SCHEMA
+/////////////////////////////////////////
+
+export const PostTypeSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  price: z.number(),
+  active: z.boolean(),
+  order: z.number().int(),
+})
+
+export type PostType = z.infer<typeof PostTypeSchema>
+
+/////////////////////////////////////////
+// DISCOUNT RULE SCHEMA
+/////////////////////////////////////////
+
+export const DiscountRuleSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  discountPercent: z.number(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+})
+
+export type DiscountRule = z.infer<typeof DiscountRuleSchema>
+
+/////////////////////////////////////////
+// QUALIFYING POST TYPE SCHEMA
+/////////////////////////////////////////
+
+export const QualifyingPostTypeSchema = z.object({
+  id: z.string().uuid(),
+  discountRuleId: z.string(),
+  postTypeId: z.string(),
+  quantity: z.number().int(),
+})
+
+export type QualifyingPostType = z.infer<typeof QualifyingPostTypeSchema>
+
+/////////////////////////////////////////
+// PROMOTION TYPE SCHEMA
+/////////////////////////////////////////
+
+export const PromotionTypeSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  price: z.number(),
+})
+
+export type PromotionType = z.infer<typeof PromotionTypeSchema>
 
 /////////////////////////////////////////
 // SELECT & INCLUDE
@@ -361,6 +422,99 @@ export const LinkClickSelectSchema: z.ZodType<Prisma.LinkClickSelect> = z.object
   linkId: z.boolean().optional(),
   datetime: z.boolean().optional(),
   link: z.union([z.boolean(),z.lazy(() => LinkArgsSchema)]).optional(),
+}).strict()
+
+// POST TYPE
+//------------------------------------------------------
+
+export const PostTypeIncludeSchema: z.ZodType<Prisma.PostTypeInclude> = z.object({
+  qualifyingPosts: z.union([z.boolean(),z.lazy(() => QualifyingPostTypeFindManyArgsSchema)]).optional(),
+  _count: z.union([z.boolean(),z.lazy(() => PostTypeCountOutputTypeArgsSchema)]).optional(),
+}).strict()
+
+export const PostTypeArgsSchema: z.ZodType<Prisma.PostTypeDefaultArgs> = z.object({
+  select: z.lazy(() => PostTypeSelectSchema).optional(),
+  include: z.lazy(() => PostTypeIncludeSchema).optional(),
+}).strict();
+
+export const PostTypeCountOutputTypeArgsSchema: z.ZodType<Prisma.PostTypeCountOutputTypeDefaultArgs> = z.object({
+  select: z.lazy(() => PostTypeCountOutputTypeSelectSchema).nullish(),
+}).strict();
+
+export const PostTypeCountOutputTypeSelectSchema: z.ZodType<Prisma.PostTypeCountOutputTypeSelect> = z.object({
+  qualifyingPosts: z.boolean().optional(),
+}).strict();
+
+export const PostTypeSelectSchema: z.ZodType<Prisma.PostTypeSelect> = z.object({
+  id: z.boolean().optional(),
+  name: z.boolean().optional(),
+  price: z.boolean().optional(),
+  active: z.boolean().optional(),
+  order: z.boolean().optional(),
+  qualifyingPosts: z.union([z.boolean(),z.lazy(() => QualifyingPostTypeFindManyArgsSchema)]).optional(),
+  _count: z.union([z.boolean(),z.lazy(() => PostTypeCountOutputTypeArgsSchema)]).optional(),
+}).strict()
+
+// DISCOUNT RULE
+//------------------------------------------------------
+
+export const DiscountRuleIncludeSchema: z.ZodType<Prisma.DiscountRuleInclude> = z.object({
+  qualifyingPosts: z.union([z.boolean(),z.lazy(() => QualifyingPostTypeFindManyArgsSchema)]).optional(),
+  _count: z.union([z.boolean(),z.lazy(() => DiscountRuleCountOutputTypeArgsSchema)]).optional(),
+}).strict()
+
+export const DiscountRuleArgsSchema: z.ZodType<Prisma.DiscountRuleDefaultArgs> = z.object({
+  select: z.lazy(() => DiscountRuleSelectSchema).optional(),
+  include: z.lazy(() => DiscountRuleIncludeSchema).optional(),
+}).strict();
+
+export const DiscountRuleCountOutputTypeArgsSchema: z.ZodType<Prisma.DiscountRuleCountOutputTypeDefaultArgs> = z.object({
+  select: z.lazy(() => DiscountRuleCountOutputTypeSelectSchema).nullish(),
+}).strict();
+
+export const DiscountRuleCountOutputTypeSelectSchema: z.ZodType<Prisma.DiscountRuleCountOutputTypeSelect> = z.object({
+  qualifyingPosts: z.boolean().optional(),
+}).strict();
+
+export const DiscountRuleSelectSchema: z.ZodType<Prisma.DiscountRuleSelect> = z.object({
+  id: z.boolean().optional(),
+  name: z.boolean().optional(),
+  discountPercent: z.boolean().optional(),
+  createdAt: z.boolean().optional(),
+  updatedAt: z.boolean().optional(),
+  qualifyingPosts: z.union([z.boolean(),z.lazy(() => QualifyingPostTypeFindManyArgsSchema)]).optional(),
+  _count: z.union([z.boolean(),z.lazy(() => DiscountRuleCountOutputTypeArgsSchema)]).optional(),
+}).strict()
+
+// QUALIFYING POST TYPE
+//------------------------------------------------------
+
+export const QualifyingPostTypeIncludeSchema: z.ZodType<Prisma.QualifyingPostTypeInclude> = z.object({
+  discountRule: z.union([z.boolean(),z.lazy(() => DiscountRuleArgsSchema)]).optional(),
+  postType: z.union([z.boolean(),z.lazy(() => PostTypeArgsSchema)]).optional(),
+}).strict()
+
+export const QualifyingPostTypeArgsSchema: z.ZodType<Prisma.QualifyingPostTypeDefaultArgs> = z.object({
+  select: z.lazy(() => QualifyingPostTypeSelectSchema).optional(),
+  include: z.lazy(() => QualifyingPostTypeIncludeSchema).optional(),
+}).strict();
+
+export const QualifyingPostTypeSelectSchema: z.ZodType<Prisma.QualifyingPostTypeSelect> = z.object({
+  id: z.boolean().optional(),
+  discountRuleId: z.boolean().optional(),
+  postTypeId: z.boolean().optional(),
+  quantity: z.boolean().optional(),
+  discountRule: z.union([z.boolean(),z.lazy(() => DiscountRuleArgsSchema)]).optional(),
+  postType: z.union([z.boolean(),z.lazy(() => PostTypeArgsSchema)]).optional(),
+}).strict()
+
+// PROMOTION TYPE
+//------------------------------------------------------
+
+export const PromotionTypeSelectSchema: z.ZodType<Prisma.PromotionTypeSelect> = z.object({
+  id: z.boolean().optional(),
+  name: z.boolean().optional(),
+  price: z.boolean().optional(),
 }).strict()
 
 
@@ -911,6 +1065,241 @@ export const LinkClickScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.Lin
   datetime: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
 }).strict();
 
+export const PostTypeWhereInputSchema: z.ZodType<Prisma.PostTypeWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => PostTypeWhereInputSchema),z.lazy(() => PostTypeWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => PostTypeWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => PostTypeWhereInputSchema),z.lazy(() => PostTypeWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  price: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
+  active: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  order: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  qualifyingPosts: z.lazy(() => QualifyingPostTypeListRelationFilterSchema).optional()
+}).strict();
+
+export const PostTypeOrderByWithRelationInputSchema: z.ZodType<Prisma.PostTypeOrderByWithRelationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional(),
+  price: z.lazy(() => SortOrderSchema).optional(),
+  active: z.lazy(() => SortOrderSchema).optional(),
+  order: z.lazy(() => SortOrderSchema).optional(),
+  qualifyingPosts: z.lazy(() => QualifyingPostTypeOrderByRelationAggregateInputSchema).optional()
+}).strict();
+
+export const PostTypeWhereUniqueInputSchema: z.ZodType<Prisma.PostTypeWhereUniqueInput> = z.object({
+  id: z.string().uuid()
+})
+.and(z.object({
+  id: z.string().uuid().optional(),
+  AND: z.union([ z.lazy(() => PostTypeWhereInputSchema),z.lazy(() => PostTypeWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => PostTypeWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => PostTypeWhereInputSchema),z.lazy(() => PostTypeWhereInputSchema).array() ]).optional(),
+  name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  price: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
+  active: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  order: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
+  qualifyingPosts: z.lazy(() => QualifyingPostTypeListRelationFilterSchema).optional()
+}).strict());
+
+export const PostTypeOrderByWithAggregationInputSchema: z.ZodType<Prisma.PostTypeOrderByWithAggregationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional(),
+  price: z.lazy(() => SortOrderSchema).optional(),
+  active: z.lazy(() => SortOrderSchema).optional(),
+  order: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => PostTypeCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => PostTypeAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => PostTypeMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => PostTypeMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => PostTypeSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const PostTypeScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.PostTypeScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => PostTypeScalarWhereWithAggregatesInputSchema),z.lazy(() => PostTypeScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => PostTypeScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => PostTypeScalarWhereWithAggregatesInputSchema),z.lazy(() => PostTypeScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  price: z.union([ z.lazy(() => FloatWithAggregatesFilterSchema),z.number() ]).optional(),
+  active: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
+  order: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+}).strict();
+
+export const DiscountRuleWhereInputSchema: z.ZodType<Prisma.DiscountRuleWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => DiscountRuleWhereInputSchema),z.lazy(() => DiscountRuleWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => DiscountRuleWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => DiscountRuleWhereInputSchema),z.lazy(() => DiscountRuleWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  discountPercent: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  qualifyingPosts: z.lazy(() => QualifyingPostTypeListRelationFilterSchema).optional()
+}).strict();
+
+export const DiscountRuleOrderByWithRelationInputSchema: z.ZodType<Prisma.DiscountRuleOrderByWithRelationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional(),
+  discountPercent: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  qualifyingPosts: z.lazy(() => QualifyingPostTypeOrderByRelationAggregateInputSchema).optional()
+}).strict();
+
+export const DiscountRuleWhereUniqueInputSchema: z.ZodType<Prisma.DiscountRuleWhereUniqueInput> = z.object({
+  id: z.string().uuid()
+})
+.and(z.object({
+  id: z.string().uuid().optional(),
+  AND: z.union([ z.lazy(() => DiscountRuleWhereInputSchema),z.lazy(() => DiscountRuleWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => DiscountRuleWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => DiscountRuleWhereInputSchema),z.lazy(() => DiscountRuleWhereInputSchema).array() ]).optional(),
+  name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  discountPercent: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  qualifyingPosts: z.lazy(() => QualifyingPostTypeListRelationFilterSchema).optional()
+}).strict());
+
+export const DiscountRuleOrderByWithAggregationInputSchema: z.ZodType<Prisma.DiscountRuleOrderByWithAggregationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional(),
+  discountPercent: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => DiscountRuleCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => DiscountRuleAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => DiscountRuleMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => DiscountRuleMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => DiscountRuleSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const DiscountRuleScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.DiscountRuleScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => DiscountRuleScalarWhereWithAggregatesInputSchema),z.lazy(() => DiscountRuleScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => DiscountRuleScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => DiscountRuleScalarWhereWithAggregatesInputSchema),z.lazy(() => DiscountRuleScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  discountPercent: z.union([ z.lazy(() => FloatWithAggregatesFilterSchema),z.number() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
+}).strict();
+
+export const QualifyingPostTypeWhereInputSchema: z.ZodType<Prisma.QualifyingPostTypeWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => QualifyingPostTypeWhereInputSchema),z.lazy(() => QualifyingPostTypeWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => QualifyingPostTypeWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => QualifyingPostTypeWhereInputSchema),z.lazy(() => QualifyingPostTypeWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  discountRuleId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  postTypeId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  quantity: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  discountRule: z.union([ z.lazy(() => DiscountRuleRelationFilterSchema),z.lazy(() => DiscountRuleWhereInputSchema) ]).optional(),
+  postType: z.union([ z.lazy(() => PostTypeRelationFilterSchema),z.lazy(() => PostTypeWhereInputSchema) ]).optional(),
+}).strict();
+
+export const QualifyingPostTypeOrderByWithRelationInputSchema: z.ZodType<Prisma.QualifyingPostTypeOrderByWithRelationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  discountRuleId: z.lazy(() => SortOrderSchema).optional(),
+  postTypeId: z.lazy(() => SortOrderSchema).optional(),
+  quantity: z.lazy(() => SortOrderSchema).optional(),
+  discountRule: z.lazy(() => DiscountRuleOrderByWithRelationInputSchema).optional(),
+  postType: z.lazy(() => PostTypeOrderByWithRelationInputSchema).optional()
+}).strict();
+
+export const QualifyingPostTypeWhereUniqueInputSchema: z.ZodType<Prisma.QualifyingPostTypeWhereUniqueInput> = z.union([
+  z.object({
+    id: z.string().uuid(),
+    discountRuleId_postTypeId: z.lazy(() => QualifyingPostTypeDiscountRuleIdPostTypeIdCompoundUniqueInputSchema)
+  }),
+  z.object({
+    id: z.string().uuid(),
+  }),
+  z.object({
+    discountRuleId_postTypeId: z.lazy(() => QualifyingPostTypeDiscountRuleIdPostTypeIdCompoundUniqueInputSchema),
+  }),
+])
+.and(z.object({
+  id: z.string().uuid().optional(),
+  discountRuleId_postTypeId: z.lazy(() => QualifyingPostTypeDiscountRuleIdPostTypeIdCompoundUniqueInputSchema).optional(),
+  AND: z.union([ z.lazy(() => QualifyingPostTypeWhereInputSchema),z.lazy(() => QualifyingPostTypeWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => QualifyingPostTypeWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => QualifyingPostTypeWhereInputSchema),z.lazy(() => QualifyingPostTypeWhereInputSchema).array() ]).optional(),
+  discountRuleId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  postTypeId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  quantity: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
+  discountRule: z.union([ z.lazy(() => DiscountRuleRelationFilterSchema),z.lazy(() => DiscountRuleWhereInputSchema) ]).optional(),
+  postType: z.union([ z.lazy(() => PostTypeRelationFilterSchema),z.lazy(() => PostTypeWhereInputSchema) ]).optional(),
+}).strict());
+
+export const QualifyingPostTypeOrderByWithAggregationInputSchema: z.ZodType<Prisma.QualifyingPostTypeOrderByWithAggregationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  discountRuleId: z.lazy(() => SortOrderSchema).optional(),
+  postTypeId: z.lazy(() => SortOrderSchema).optional(),
+  quantity: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => QualifyingPostTypeCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => QualifyingPostTypeAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => QualifyingPostTypeMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => QualifyingPostTypeMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => QualifyingPostTypeSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const QualifyingPostTypeScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.QualifyingPostTypeScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => QualifyingPostTypeScalarWhereWithAggregatesInputSchema),z.lazy(() => QualifyingPostTypeScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => QualifyingPostTypeScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => QualifyingPostTypeScalarWhereWithAggregatesInputSchema),z.lazy(() => QualifyingPostTypeScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  discountRuleId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  postTypeId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  quantity: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+}).strict();
+
+export const PromotionTypeWhereInputSchema: z.ZodType<Prisma.PromotionTypeWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => PromotionTypeWhereInputSchema),z.lazy(() => PromotionTypeWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => PromotionTypeWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => PromotionTypeWhereInputSchema),z.lazy(() => PromotionTypeWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  price: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
+}).strict();
+
+export const PromotionTypeOrderByWithRelationInputSchema: z.ZodType<Prisma.PromotionTypeOrderByWithRelationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional(),
+  price: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const PromotionTypeWhereUniqueInputSchema: z.ZodType<Prisma.PromotionTypeWhereUniqueInput> = z.object({
+  id: z.string().uuid()
+})
+.and(z.object({
+  id: z.string().uuid().optional(),
+  AND: z.union([ z.lazy(() => PromotionTypeWhereInputSchema),z.lazy(() => PromotionTypeWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => PromotionTypeWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => PromotionTypeWhereInputSchema),z.lazy(() => PromotionTypeWhereInputSchema).array() ]).optional(),
+  name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  price: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
+}).strict());
+
+export const PromotionTypeOrderByWithAggregationInputSchema: z.ZodType<Prisma.PromotionTypeOrderByWithAggregationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional(),
+  price: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => PromotionTypeCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => PromotionTypeAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => PromotionTypeMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => PromotionTypeMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => PromotionTypeSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const PromotionTypeScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.PromotionTypeScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => PromotionTypeScalarWhereWithAggregatesInputSchema),z.lazy(() => PromotionTypeScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => PromotionTypeScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => PromotionTypeScalarWhereWithAggregatesInputSchema),z.lazy(() => PromotionTypeScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  price: z.union([ z.lazy(() => FloatWithAggregatesFilterSchema),z.number() ]).optional(),
+}).strict();
+
 export const UserCreateInputSchema: z.ZodType<Prisma.UserCreateInput> = z.object({
   id: z.string().cuid().optional(),
   name: z.string().optional().nullable(),
@@ -1421,6 +1810,215 @@ export const LinkClickUncheckedUpdateManyInputSchema: z.ZodType<Prisma.LinkClick
   id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   linkId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   datetime: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const PostTypeCreateInputSchema: z.ZodType<Prisma.PostTypeCreateInput> = z.object({
+  id: z.string().uuid().optional(),
+  name: z.string(),
+  price: z.number(),
+  active: z.boolean().optional(),
+  order: z.number().int().optional(),
+  qualifyingPosts: z.lazy(() => QualifyingPostTypeCreateNestedManyWithoutPostTypeInputSchema).optional()
+}).strict();
+
+export const PostTypeUncheckedCreateInputSchema: z.ZodType<Prisma.PostTypeUncheckedCreateInput> = z.object({
+  id: z.string().uuid().optional(),
+  name: z.string(),
+  price: z.number(),
+  active: z.boolean().optional(),
+  order: z.number().int().optional(),
+  qualifyingPosts: z.lazy(() => QualifyingPostTypeUncheckedCreateNestedManyWithoutPostTypeInputSchema).optional()
+}).strict();
+
+export const PostTypeUpdateInputSchema: z.ZodType<Prisma.PostTypeUpdateInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  price: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  active: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  order: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  qualifyingPosts: z.lazy(() => QualifyingPostTypeUpdateManyWithoutPostTypeNestedInputSchema).optional()
+}).strict();
+
+export const PostTypeUncheckedUpdateInputSchema: z.ZodType<Prisma.PostTypeUncheckedUpdateInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  price: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  active: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  order: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  qualifyingPosts: z.lazy(() => QualifyingPostTypeUncheckedUpdateManyWithoutPostTypeNestedInputSchema).optional()
+}).strict();
+
+export const PostTypeCreateManyInputSchema: z.ZodType<Prisma.PostTypeCreateManyInput> = z.object({
+  id: z.string().uuid().optional(),
+  name: z.string(),
+  price: z.number(),
+  active: z.boolean().optional(),
+  order: z.number().int().optional()
+}).strict();
+
+export const PostTypeUpdateManyMutationInputSchema: z.ZodType<Prisma.PostTypeUpdateManyMutationInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  price: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  active: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  order: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const PostTypeUncheckedUpdateManyInputSchema: z.ZodType<Prisma.PostTypeUncheckedUpdateManyInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  price: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  active: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  order: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const DiscountRuleCreateInputSchema: z.ZodType<Prisma.DiscountRuleCreateInput> = z.object({
+  id: z.string().uuid().optional(),
+  name: z.string(),
+  discountPercent: z.number(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  qualifyingPosts: z.lazy(() => QualifyingPostTypeCreateNestedManyWithoutDiscountRuleInputSchema).optional()
+}).strict();
+
+export const DiscountRuleUncheckedCreateInputSchema: z.ZodType<Prisma.DiscountRuleUncheckedCreateInput> = z.object({
+  id: z.string().uuid().optional(),
+  name: z.string(),
+  discountPercent: z.number(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  qualifyingPosts: z.lazy(() => QualifyingPostTypeUncheckedCreateNestedManyWithoutDiscountRuleInputSchema).optional()
+}).strict();
+
+export const DiscountRuleUpdateInputSchema: z.ZodType<Prisma.DiscountRuleUpdateInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  discountPercent: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  qualifyingPosts: z.lazy(() => QualifyingPostTypeUpdateManyWithoutDiscountRuleNestedInputSchema).optional()
+}).strict();
+
+export const DiscountRuleUncheckedUpdateInputSchema: z.ZodType<Prisma.DiscountRuleUncheckedUpdateInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  discountPercent: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  qualifyingPosts: z.lazy(() => QualifyingPostTypeUncheckedUpdateManyWithoutDiscountRuleNestedInputSchema).optional()
+}).strict();
+
+export const DiscountRuleCreateManyInputSchema: z.ZodType<Prisma.DiscountRuleCreateManyInput> = z.object({
+  id: z.string().uuid().optional(),
+  name: z.string(),
+  discountPercent: z.number(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional()
+}).strict();
+
+export const DiscountRuleUpdateManyMutationInputSchema: z.ZodType<Prisma.DiscountRuleUpdateManyMutationInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  discountPercent: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const DiscountRuleUncheckedUpdateManyInputSchema: z.ZodType<Prisma.DiscountRuleUncheckedUpdateManyInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  discountPercent: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const QualifyingPostTypeCreateInputSchema: z.ZodType<Prisma.QualifyingPostTypeCreateInput> = z.object({
+  id: z.string().uuid().optional(),
+  quantity: z.number().int(),
+  discountRule: z.lazy(() => DiscountRuleCreateNestedOneWithoutQualifyingPostsInputSchema),
+  postType: z.lazy(() => PostTypeCreateNestedOneWithoutQualifyingPostsInputSchema)
+}).strict();
+
+export const QualifyingPostTypeUncheckedCreateInputSchema: z.ZodType<Prisma.QualifyingPostTypeUncheckedCreateInput> = z.object({
+  id: z.string().uuid().optional(),
+  discountRuleId: z.string(),
+  postTypeId: z.string(),
+  quantity: z.number().int()
+}).strict();
+
+export const QualifyingPostTypeUpdateInputSchema: z.ZodType<Prisma.QualifyingPostTypeUpdateInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  quantity: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  discountRule: z.lazy(() => DiscountRuleUpdateOneRequiredWithoutQualifyingPostsNestedInputSchema).optional(),
+  postType: z.lazy(() => PostTypeUpdateOneRequiredWithoutQualifyingPostsNestedInputSchema).optional()
+}).strict();
+
+export const QualifyingPostTypeUncheckedUpdateInputSchema: z.ZodType<Prisma.QualifyingPostTypeUncheckedUpdateInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  discountRuleId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  postTypeId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  quantity: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const QualifyingPostTypeCreateManyInputSchema: z.ZodType<Prisma.QualifyingPostTypeCreateManyInput> = z.object({
+  id: z.string().uuid().optional(),
+  discountRuleId: z.string(),
+  postTypeId: z.string(),
+  quantity: z.number().int()
+}).strict();
+
+export const QualifyingPostTypeUpdateManyMutationInputSchema: z.ZodType<Prisma.QualifyingPostTypeUpdateManyMutationInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  quantity: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const QualifyingPostTypeUncheckedUpdateManyInputSchema: z.ZodType<Prisma.QualifyingPostTypeUncheckedUpdateManyInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  discountRuleId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  postTypeId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  quantity: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const PromotionTypeCreateInputSchema: z.ZodType<Prisma.PromotionTypeCreateInput> = z.object({
+  id: z.string().uuid().optional(),
+  name: z.string(),
+  price: z.number()
+}).strict();
+
+export const PromotionTypeUncheckedCreateInputSchema: z.ZodType<Prisma.PromotionTypeUncheckedCreateInput> = z.object({
+  id: z.string().uuid().optional(),
+  name: z.string(),
+  price: z.number()
+}).strict();
+
+export const PromotionTypeUpdateInputSchema: z.ZodType<Prisma.PromotionTypeUpdateInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  price: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const PromotionTypeUncheckedUpdateInputSchema: z.ZodType<Prisma.PromotionTypeUncheckedUpdateInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  price: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const PromotionTypeCreateManyInputSchema: z.ZodType<Prisma.PromotionTypeCreateManyInput> = z.object({
+  id: z.string().uuid().optional(),
+  name: z.string(),
+  price: z.number()
+}).strict();
+
+export const PromotionTypeUpdateManyMutationInputSchema: z.ZodType<Prisma.PromotionTypeUpdateManyMutationInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  price: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const PromotionTypeUncheckedUpdateManyInputSchema: z.ZodType<Prisma.PromotionTypeUncheckedUpdateManyInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  price: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const StringFilterSchema: z.ZodType<Prisma.StringFilter> = z.object({
@@ -1936,6 +2534,179 @@ export const LinkClickMinOrderByAggregateInputSchema: z.ZodType<Prisma.LinkClick
   datetime: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
+export const FloatFilterSchema: z.ZodType<Prisma.FloatFilter> = z.object({
+  equals: z.number().optional(),
+  in: z.number().array().optional(),
+  notIn: z.number().array().optional(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedFloatFilterSchema) ]).optional(),
+}).strict();
+
+export const QualifyingPostTypeListRelationFilterSchema: z.ZodType<Prisma.QualifyingPostTypeListRelationFilter> = z.object({
+  every: z.lazy(() => QualifyingPostTypeWhereInputSchema).optional(),
+  some: z.lazy(() => QualifyingPostTypeWhereInputSchema).optional(),
+  none: z.lazy(() => QualifyingPostTypeWhereInputSchema).optional()
+}).strict();
+
+export const QualifyingPostTypeOrderByRelationAggregateInputSchema: z.ZodType<Prisma.QualifyingPostTypeOrderByRelationAggregateInput> = z.object({
+  _count: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const PostTypeCountOrderByAggregateInputSchema: z.ZodType<Prisma.PostTypeCountOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional(),
+  price: z.lazy(() => SortOrderSchema).optional(),
+  active: z.lazy(() => SortOrderSchema).optional(),
+  order: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const PostTypeAvgOrderByAggregateInputSchema: z.ZodType<Prisma.PostTypeAvgOrderByAggregateInput> = z.object({
+  price: z.lazy(() => SortOrderSchema).optional(),
+  order: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const PostTypeMaxOrderByAggregateInputSchema: z.ZodType<Prisma.PostTypeMaxOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional(),
+  price: z.lazy(() => SortOrderSchema).optional(),
+  active: z.lazy(() => SortOrderSchema).optional(),
+  order: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const PostTypeMinOrderByAggregateInputSchema: z.ZodType<Prisma.PostTypeMinOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional(),
+  price: z.lazy(() => SortOrderSchema).optional(),
+  active: z.lazy(() => SortOrderSchema).optional(),
+  order: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const PostTypeSumOrderByAggregateInputSchema: z.ZodType<Prisma.PostTypeSumOrderByAggregateInput> = z.object({
+  price: z.lazy(() => SortOrderSchema).optional(),
+  order: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const FloatWithAggregatesFilterSchema: z.ZodType<Prisma.FloatWithAggregatesFilter> = z.object({
+  equals: z.number().optional(),
+  in: z.number().array().optional(),
+  notIn: z.number().array().optional(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedFloatWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _avg: z.lazy(() => NestedFloatFilterSchema).optional(),
+  _sum: z.lazy(() => NestedFloatFilterSchema).optional(),
+  _min: z.lazy(() => NestedFloatFilterSchema).optional(),
+  _max: z.lazy(() => NestedFloatFilterSchema).optional()
+}).strict();
+
+export const DiscountRuleCountOrderByAggregateInputSchema: z.ZodType<Prisma.DiscountRuleCountOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional(),
+  discountPercent: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const DiscountRuleAvgOrderByAggregateInputSchema: z.ZodType<Prisma.DiscountRuleAvgOrderByAggregateInput> = z.object({
+  discountPercent: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const DiscountRuleMaxOrderByAggregateInputSchema: z.ZodType<Prisma.DiscountRuleMaxOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional(),
+  discountPercent: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const DiscountRuleMinOrderByAggregateInputSchema: z.ZodType<Prisma.DiscountRuleMinOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional(),
+  discountPercent: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const DiscountRuleSumOrderByAggregateInputSchema: z.ZodType<Prisma.DiscountRuleSumOrderByAggregateInput> = z.object({
+  discountPercent: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const DiscountRuleRelationFilterSchema: z.ZodType<Prisma.DiscountRuleRelationFilter> = z.object({
+  is: z.lazy(() => DiscountRuleWhereInputSchema).optional(),
+  isNot: z.lazy(() => DiscountRuleWhereInputSchema).optional()
+}).strict();
+
+export const PostTypeRelationFilterSchema: z.ZodType<Prisma.PostTypeRelationFilter> = z.object({
+  is: z.lazy(() => PostTypeWhereInputSchema).optional(),
+  isNot: z.lazy(() => PostTypeWhereInputSchema).optional()
+}).strict();
+
+export const QualifyingPostTypeDiscountRuleIdPostTypeIdCompoundUniqueInputSchema: z.ZodType<Prisma.QualifyingPostTypeDiscountRuleIdPostTypeIdCompoundUniqueInput> = z.object({
+  discountRuleId: z.string(),
+  postTypeId: z.string()
+}).strict();
+
+export const QualifyingPostTypeCountOrderByAggregateInputSchema: z.ZodType<Prisma.QualifyingPostTypeCountOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  discountRuleId: z.lazy(() => SortOrderSchema).optional(),
+  postTypeId: z.lazy(() => SortOrderSchema).optional(),
+  quantity: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const QualifyingPostTypeAvgOrderByAggregateInputSchema: z.ZodType<Prisma.QualifyingPostTypeAvgOrderByAggregateInput> = z.object({
+  quantity: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const QualifyingPostTypeMaxOrderByAggregateInputSchema: z.ZodType<Prisma.QualifyingPostTypeMaxOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  discountRuleId: z.lazy(() => SortOrderSchema).optional(),
+  postTypeId: z.lazy(() => SortOrderSchema).optional(),
+  quantity: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const QualifyingPostTypeMinOrderByAggregateInputSchema: z.ZodType<Prisma.QualifyingPostTypeMinOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  discountRuleId: z.lazy(() => SortOrderSchema).optional(),
+  postTypeId: z.lazy(() => SortOrderSchema).optional(),
+  quantity: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const QualifyingPostTypeSumOrderByAggregateInputSchema: z.ZodType<Prisma.QualifyingPostTypeSumOrderByAggregateInput> = z.object({
+  quantity: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const PromotionTypeCountOrderByAggregateInputSchema: z.ZodType<Prisma.PromotionTypeCountOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional(),
+  price: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const PromotionTypeAvgOrderByAggregateInputSchema: z.ZodType<Prisma.PromotionTypeAvgOrderByAggregateInput> = z.object({
+  price: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const PromotionTypeMaxOrderByAggregateInputSchema: z.ZodType<Prisma.PromotionTypeMaxOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional(),
+  price: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const PromotionTypeMinOrderByAggregateInputSchema: z.ZodType<Prisma.PromotionTypeMinOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional(),
+  price: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const PromotionTypeSumOrderByAggregateInputSchema: z.ZodType<Prisma.PromotionTypeSumOrderByAggregateInput> = z.object({
+  price: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
 export const AccountCreateNestedManyWithoutUserInputSchema: z.ZodType<Prisma.AccountCreateNestedManyWithoutUserInput> = z.object({
   create: z.union([ z.lazy(() => AccountCreateWithoutUserInputSchema),z.lazy(() => AccountCreateWithoutUserInputSchema).array(),z.lazy(() => AccountUncheckedCreateWithoutUserInputSchema),z.lazy(() => AccountUncheckedCreateWithoutUserInputSchema).array() ]).optional(),
   connectOrCreate: z.union([ z.lazy(() => AccountCreateOrConnectWithoutUserInputSchema),z.lazy(() => AccountCreateOrConnectWithoutUserInputSchema).array() ]).optional(),
@@ -2252,6 +3023,126 @@ export const LinkUpdateOneRequiredWithoutClicksNestedInputSchema: z.ZodType<Pris
   update: z.union([ z.lazy(() => LinkUpdateToOneWithWhereWithoutClicksInputSchema),z.lazy(() => LinkUpdateWithoutClicksInputSchema),z.lazy(() => LinkUncheckedUpdateWithoutClicksInputSchema) ]).optional(),
 }).strict();
 
+export const QualifyingPostTypeCreateNestedManyWithoutPostTypeInputSchema: z.ZodType<Prisma.QualifyingPostTypeCreateNestedManyWithoutPostTypeInput> = z.object({
+  create: z.union([ z.lazy(() => QualifyingPostTypeCreateWithoutPostTypeInputSchema),z.lazy(() => QualifyingPostTypeCreateWithoutPostTypeInputSchema).array(),z.lazy(() => QualifyingPostTypeUncheckedCreateWithoutPostTypeInputSchema),z.lazy(() => QualifyingPostTypeUncheckedCreateWithoutPostTypeInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => QualifyingPostTypeCreateOrConnectWithoutPostTypeInputSchema),z.lazy(() => QualifyingPostTypeCreateOrConnectWithoutPostTypeInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => QualifyingPostTypeCreateManyPostTypeInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema),z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
+export const QualifyingPostTypeUncheckedCreateNestedManyWithoutPostTypeInputSchema: z.ZodType<Prisma.QualifyingPostTypeUncheckedCreateNestedManyWithoutPostTypeInput> = z.object({
+  create: z.union([ z.lazy(() => QualifyingPostTypeCreateWithoutPostTypeInputSchema),z.lazy(() => QualifyingPostTypeCreateWithoutPostTypeInputSchema).array(),z.lazy(() => QualifyingPostTypeUncheckedCreateWithoutPostTypeInputSchema),z.lazy(() => QualifyingPostTypeUncheckedCreateWithoutPostTypeInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => QualifyingPostTypeCreateOrConnectWithoutPostTypeInputSchema),z.lazy(() => QualifyingPostTypeCreateOrConnectWithoutPostTypeInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => QualifyingPostTypeCreateManyPostTypeInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema),z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
+export const FloatFieldUpdateOperationsInputSchema: z.ZodType<Prisma.FloatFieldUpdateOperationsInput> = z.object({
+  set: z.number().optional(),
+  increment: z.number().optional(),
+  decrement: z.number().optional(),
+  multiply: z.number().optional(),
+  divide: z.number().optional()
+}).strict();
+
+export const QualifyingPostTypeUpdateManyWithoutPostTypeNestedInputSchema: z.ZodType<Prisma.QualifyingPostTypeUpdateManyWithoutPostTypeNestedInput> = z.object({
+  create: z.union([ z.lazy(() => QualifyingPostTypeCreateWithoutPostTypeInputSchema),z.lazy(() => QualifyingPostTypeCreateWithoutPostTypeInputSchema).array(),z.lazy(() => QualifyingPostTypeUncheckedCreateWithoutPostTypeInputSchema),z.lazy(() => QualifyingPostTypeUncheckedCreateWithoutPostTypeInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => QualifyingPostTypeCreateOrConnectWithoutPostTypeInputSchema),z.lazy(() => QualifyingPostTypeCreateOrConnectWithoutPostTypeInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => QualifyingPostTypeUpsertWithWhereUniqueWithoutPostTypeInputSchema),z.lazy(() => QualifyingPostTypeUpsertWithWhereUniqueWithoutPostTypeInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => QualifyingPostTypeCreateManyPostTypeInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema),z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema),z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema),z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema),z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => QualifyingPostTypeUpdateWithWhereUniqueWithoutPostTypeInputSchema),z.lazy(() => QualifyingPostTypeUpdateWithWhereUniqueWithoutPostTypeInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => QualifyingPostTypeUpdateManyWithWhereWithoutPostTypeInputSchema),z.lazy(() => QualifyingPostTypeUpdateManyWithWhereWithoutPostTypeInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => QualifyingPostTypeScalarWhereInputSchema),z.lazy(() => QualifyingPostTypeScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const QualifyingPostTypeUncheckedUpdateManyWithoutPostTypeNestedInputSchema: z.ZodType<Prisma.QualifyingPostTypeUncheckedUpdateManyWithoutPostTypeNestedInput> = z.object({
+  create: z.union([ z.lazy(() => QualifyingPostTypeCreateWithoutPostTypeInputSchema),z.lazy(() => QualifyingPostTypeCreateWithoutPostTypeInputSchema).array(),z.lazy(() => QualifyingPostTypeUncheckedCreateWithoutPostTypeInputSchema),z.lazy(() => QualifyingPostTypeUncheckedCreateWithoutPostTypeInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => QualifyingPostTypeCreateOrConnectWithoutPostTypeInputSchema),z.lazy(() => QualifyingPostTypeCreateOrConnectWithoutPostTypeInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => QualifyingPostTypeUpsertWithWhereUniqueWithoutPostTypeInputSchema),z.lazy(() => QualifyingPostTypeUpsertWithWhereUniqueWithoutPostTypeInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => QualifyingPostTypeCreateManyPostTypeInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema),z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema),z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema),z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema),z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => QualifyingPostTypeUpdateWithWhereUniqueWithoutPostTypeInputSchema),z.lazy(() => QualifyingPostTypeUpdateWithWhereUniqueWithoutPostTypeInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => QualifyingPostTypeUpdateManyWithWhereWithoutPostTypeInputSchema),z.lazy(() => QualifyingPostTypeUpdateManyWithWhereWithoutPostTypeInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => QualifyingPostTypeScalarWhereInputSchema),z.lazy(() => QualifyingPostTypeScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const QualifyingPostTypeCreateNestedManyWithoutDiscountRuleInputSchema: z.ZodType<Prisma.QualifyingPostTypeCreateNestedManyWithoutDiscountRuleInput> = z.object({
+  create: z.union([ z.lazy(() => QualifyingPostTypeCreateWithoutDiscountRuleInputSchema),z.lazy(() => QualifyingPostTypeCreateWithoutDiscountRuleInputSchema).array(),z.lazy(() => QualifyingPostTypeUncheckedCreateWithoutDiscountRuleInputSchema),z.lazy(() => QualifyingPostTypeUncheckedCreateWithoutDiscountRuleInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => QualifyingPostTypeCreateOrConnectWithoutDiscountRuleInputSchema),z.lazy(() => QualifyingPostTypeCreateOrConnectWithoutDiscountRuleInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => QualifyingPostTypeCreateManyDiscountRuleInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema),z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
+export const QualifyingPostTypeUncheckedCreateNestedManyWithoutDiscountRuleInputSchema: z.ZodType<Prisma.QualifyingPostTypeUncheckedCreateNestedManyWithoutDiscountRuleInput> = z.object({
+  create: z.union([ z.lazy(() => QualifyingPostTypeCreateWithoutDiscountRuleInputSchema),z.lazy(() => QualifyingPostTypeCreateWithoutDiscountRuleInputSchema).array(),z.lazy(() => QualifyingPostTypeUncheckedCreateWithoutDiscountRuleInputSchema),z.lazy(() => QualifyingPostTypeUncheckedCreateWithoutDiscountRuleInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => QualifyingPostTypeCreateOrConnectWithoutDiscountRuleInputSchema),z.lazy(() => QualifyingPostTypeCreateOrConnectWithoutDiscountRuleInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => QualifyingPostTypeCreateManyDiscountRuleInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema),z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
+export const QualifyingPostTypeUpdateManyWithoutDiscountRuleNestedInputSchema: z.ZodType<Prisma.QualifyingPostTypeUpdateManyWithoutDiscountRuleNestedInput> = z.object({
+  create: z.union([ z.lazy(() => QualifyingPostTypeCreateWithoutDiscountRuleInputSchema),z.lazy(() => QualifyingPostTypeCreateWithoutDiscountRuleInputSchema).array(),z.lazy(() => QualifyingPostTypeUncheckedCreateWithoutDiscountRuleInputSchema),z.lazy(() => QualifyingPostTypeUncheckedCreateWithoutDiscountRuleInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => QualifyingPostTypeCreateOrConnectWithoutDiscountRuleInputSchema),z.lazy(() => QualifyingPostTypeCreateOrConnectWithoutDiscountRuleInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => QualifyingPostTypeUpsertWithWhereUniqueWithoutDiscountRuleInputSchema),z.lazy(() => QualifyingPostTypeUpsertWithWhereUniqueWithoutDiscountRuleInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => QualifyingPostTypeCreateManyDiscountRuleInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema),z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema),z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema),z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema),z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => QualifyingPostTypeUpdateWithWhereUniqueWithoutDiscountRuleInputSchema),z.lazy(() => QualifyingPostTypeUpdateWithWhereUniqueWithoutDiscountRuleInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => QualifyingPostTypeUpdateManyWithWhereWithoutDiscountRuleInputSchema),z.lazy(() => QualifyingPostTypeUpdateManyWithWhereWithoutDiscountRuleInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => QualifyingPostTypeScalarWhereInputSchema),z.lazy(() => QualifyingPostTypeScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const QualifyingPostTypeUncheckedUpdateManyWithoutDiscountRuleNestedInputSchema: z.ZodType<Prisma.QualifyingPostTypeUncheckedUpdateManyWithoutDiscountRuleNestedInput> = z.object({
+  create: z.union([ z.lazy(() => QualifyingPostTypeCreateWithoutDiscountRuleInputSchema),z.lazy(() => QualifyingPostTypeCreateWithoutDiscountRuleInputSchema).array(),z.lazy(() => QualifyingPostTypeUncheckedCreateWithoutDiscountRuleInputSchema),z.lazy(() => QualifyingPostTypeUncheckedCreateWithoutDiscountRuleInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => QualifyingPostTypeCreateOrConnectWithoutDiscountRuleInputSchema),z.lazy(() => QualifyingPostTypeCreateOrConnectWithoutDiscountRuleInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => QualifyingPostTypeUpsertWithWhereUniqueWithoutDiscountRuleInputSchema),z.lazy(() => QualifyingPostTypeUpsertWithWhereUniqueWithoutDiscountRuleInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => QualifyingPostTypeCreateManyDiscountRuleInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema),z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema),z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema),z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema),z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => QualifyingPostTypeUpdateWithWhereUniqueWithoutDiscountRuleInputSchema),z.lazy(() => QualifyingPostTypeUpdateWithWhereUniqueWithoutDiscountRuleInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => QualifyingPostTypeUpdateManyWithWhereWithoutDiscountRuleInputSchema),z.lazy(() => QualifyingPostTypeUpdateManyWithWhereWithoutDiscountRuleInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => QualifyingPostTypeScalarWhereInputSchema),z.lazy(() => QualifyingPostTypeScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const DiscountRuleCreateNestedOneWithoutQualifyingPostsInputSchema: z.ZodType<Prisma.DiscountRuleCreateNestedOneWithoutQualifyingPostsInput> = z.object({
+  create: z.union([ z.lazy(() => DiscountRuleCreateWithoutQualifyingPostsInputSchema),z.lazy(() => DiscountRuleUncheckedCreateWithoutQualifyingPostsInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => DiscountRuleCreateOrConnectWithoutQualifyingPostsInputSchema).optional(),
+  connect: z.lazy(() => DiscountRuleWhereUniqueInputSchema).optional()
+}).strict();
+
+export const PostTypeCreateNestedOneWithoutQualifyingPostsInputSchema: z.ZodType<Prisma.PostTypeCreateNestedOneWithoutQualifyingPostsInput> = z.object({
+  create: z.union([ z.lazy(() => PostTypeCreateWithoutQualifyingPostsInputSchema),z.lazy(() => PostTypeUncheckedCreateWithoutQualifyingPostsInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => PostTypeCreateOrConnectWithoutQualifyingPostsInputSchema).optional(),
+  connect: z.lazy(() => PostTypeWhereUniqueInputSchema).optional()
+}).strict();
+
+export const DiscountRuleUpdateOneRequiredWithoutQualifyingPostsNestedInputSchema: z.ZodType<Prisma.DiscountRuleUpdateOneRequiredWithoutQualifyingPostsNestedInput> = z.object({
+  create: z.union([ z.lazy(() => DiscountRuleCreateWithoutQualifyingPostsInputSchema),z.lazy(() => DiscountRuleUncheckedCreateWithoutQualifyingPostsInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => DiscountRuleCreateOrConnectWithoutQualifyingPostsInputSchema).optional(),
+  upsert: z.lazy(() => DiscountRuleUpsertWithoutQualifyingPostsInputSchema).optional(),
+  connect: z.lazy(() => DiscountRuleWhereUniqueInputSchema).optional(),
+  update: z.union([ z.lazy(() => DiscountRuleUpdateToOneWithWhereWithoutQualifyingPostsInputSchema),z.lazy(() => DiscountRuleUpdateWithoutQualifyingPostsInputSchema),z.lazy(() => DiscountRuleUncheckedUpdateWithoutQualifyingPostsInputSchema) ]).optional(),
+}).strict();
+
+export const PostTypeUpdateOneRequiredWithoutQualifyingPostsNestedInputSchema: z.ZodType<Prisma.PostTypeUpdateOneRequiredWithoutQualifyingPostsNestedInput> = z.object({
+  create: z.union([ z.lazy(() => PostTypeCreateWithoutQualifyingPostsInputSchema),z.lazy(() => PostTypeUncheckedCreateWithoutQualifyingPostsInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => PostTypeCreateOrConnectWithoutQualifyingPostsInputSchema).optional(),
+  upsert: z.lazy(() => PostTypeUpsertWithoutQualifyingPostsInputSchema).optional(),
+  connect: z.lazy(() => PostTypeWhereUniqueInputSchema).optional(),
+  update: z.union([ z.lazy(() => PostTypeUpdateToOneWithWhereWithoutQualifyingPostsInputSchema),z.lazy(() => PostTypeUpdateWithoutQualifyingPostsInputSchema),z.lazy(() => PostTypeUncheckedUpdateWithoutQualifyingPostsInputSchema) ]).optional(),
+}).strict();
+
 export const NestedStringFilterSchema: z.ZodType<Prisma.NestedStringFilter> = z.object({
   equals: z.string().optional(),
   in: z.string().array().optional(),
@@ -2451,6 +3342,22 @@ export const NestedBoolWithAggregatesFilterSchema: z.ZodType<Prisma.NestedBoolWi
   _count: z.lazy(() => NestedIntFilterSchema).optional(),
   _min: z.lazy(() => NestedBoolFilterSchema).optional(),
   _max: z.lazy(() => NestedBoolFilterSchema).optional()
+}).strict();
+
+export const NestedFloatWithAggregatesFilterSchema: z.ZodType<Prisma.NestedFloatWithAggregatesFilter> = z.object({
+  equals: z.number().optional(),
+  in: z.number().array().optional(),
+  notIn: z.number().array().optional(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedFloatWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _avg: z.lazy(() => NestedFloatFilterSchema).optional(),
+  _sum: z.lazy(() => NestedFloatFilterSchema).optional(),
+  _min: z.lazy(() => NestedFloatFilterSchema).optional(),
+  _max: z.lazy(() => NestedFloatFilterSchema).optional()
 }).strict();
 
 export const AccountCreateWithoutUserInputSchema: z.ZodType<Prisma.AccountCreateWithoutUserInput> = z.object({
@@ -3017,6 +3924,188 @@ export const LinkUncheckedUpdateWithoutClicksInputSchema: z.ZodType<Prisma.LinkU
   order: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
+export const QualifyingPostTypeCreateWithoutPostTypeInputSchema: z.ZodType<Prisma.QualifyingPostTypeCreateWithoutPostTypeInput> = z.object({
+  id: z.string().uuid().optional(),
+  quantity: z.number().int(),
+  discountRule: z.lazy(() => DiscountRuleCreateNestedOneWithoutQualifyingPostsInputSchema)
+}).strict();
+
+export const QualifyingPostTypeUncheckedCreateWithoutPostTypeInputSchema: z.ZodType<Prisma.QualifyingPostTypeUncheckedCreateWithoutPostTypeInput> = z.object({
+  id: z.string().uuid().optional(),
+  discountRuleId: z.string(),
+  quantity: z.number().int()
+}).strict();
+
+export const QualifyingPostTypeCreateOrConnectWithoutPostTypeInputSchema: z.ZodType<Prisma.QualifyingPostTypeCreateOrConnectWithoutPostTypeInput> = z.object({
+  where: z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => QualifyingPostTypeCreateWithoutPostTypeInputSchema),z.lazy(() => QualifyingPostTypeUncheckedCreateWithoutPostTypeInputSchema) ]),
+}).strict();
+
+export const QualifyingPostTypeCreateManyPostTypeInputEnvelopeSchema: z.ZodType<Prisma.QualifyingPostTypeCreateManyPostTypeInputEnvelope> = z.object({
+  data: z.union([ z.lazy(() => QualifyingPostTypeCreateManyPostTypeInputSchema),z.lazy(() => QualifyingPostTypeCreateManyPostTypeInputSchema).array() ]),
+  skipDuplicates: z.boolean().optional()
+}).strict();
+
+export const QualifyingPostTypeUpsertWithWhereUniqueWithoutPostTypeInputSchema: z.ZodType<Prisma.QualifyingPostTypeUpsertWithWhereUniqueWithoutPostTypeInput> = z.object({
+  where: z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema),
+  update: z.union([ z.lazy(() => QualifyingPostTypeUpdateWithoutPostTypeInputSchema),z.lazy(() => QualifyingPostTypeUncheckedUpdateWithoutPostTypeInputSchema) ]),
+  create: z.union([ z.lazy(() => QualifyingPostTypeCreateWithoutPostTypeInputSchema),z.lazy(() => QualifyingPostTypeUncheckedCreateWithoutPostTypeInputSchema) ]),
+}).strict();
+
+export const QualifyingPostTypeUpdateWithWhereUniqueWithoutPostTypeInputSchema: z.ZodType<Prisma.QualifyingPostTypeUpdateWithWhereUniqueWithoutPostTypeInput> = z.object({
+  where: z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema),
+  data: z.union([ z.lazy(() => QualifyingPostTypeUpdateWithoutPostTypeInputSchema),z.lazy(() => QualifyingPostTypeUncheckedUpdateWithoutPostTypeInputSchema) ]),
+}).strict();
+
+export const QualifyingPostTypeUpdateManyWithWhereWithoutPostTypeInputSchema: z.ZodType<Prisma.QualifyingPostTypeUpdateManyWithWhereWithoutPostTypeInput> = z.object({
+  where: z.lazy(() => QualifyingPostTypeScalarWhereInputSchema),
+  data: z.union([ z.lazy(() => QualifyingPostTypeUpdateManyMutationInputSchema),z.lazy(() => QualifyingPostTypeUncheckedUpdateManyWithoutPostTypeInputSchema) ]),
+}).strict();
+
+export const QualifyingPostTypeScalarWhereInputSchema: z.ZodType<Prisma.QualifyingPostTypeScalarWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => QualifyingPostTypeScalarWhereInputSchema),z.lazy(() => QualifyingPostTypeScalarWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => QualifyingPostTypeScalarWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => QualifyingPostTypeScalarWhereInputSchema),z.lazy(() => QualifyingPostTypeScalarWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  discountRuleId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  postTypeId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  quantity: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+}).strict();
+
+export const QualifyingPostTypeCreateWithoutDiscountRuleInputSchema: z.ZodType<Prisma.QualifyingPostTypeCreateWithoutDiscountRuleInput> = z.object({
+  id: z.string().uuid().optional(),
+  quantity: z.number().int(),
+  postType: z.lazy(() => PostTypeCreateNestedOneWithoutQualifyingPostsInputSchema)
+}).strict();
+
+export const QualifyingPostTypeUncheckedCreateWithoutDiscountRuleInputSchema: z.ZodType<Prisma.QualifyingPostTypeUncheckedCreateWithoutDiscountRuleInput> = z.object({
+  id: z.string().uuid().optional(),
+  postTypeId: z.string(),
+  quantity: z.number().int()
+}).strict();
+
+export const QualifyingPostTypeCreateOrConnectWithoutDiscountRuleInputSchema: z.ZodType<Prisma.QualifyingPostTypeCreateOrConnectWithoutDiscountRuleInput> = z.object({
+  where: z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => QualifyingPostTypeCreateWithoutDiscountRuleInputSchema),z.lazy(() => QualifyingPostTypeUncheckedCreateWithoutDiscountRuleInputSchema) ]),
+}).strict();
+
+export const QualifyingPostTypeCreateManyDiscountRuleInputEnvelopeSchema: z.ZodType<Prisma.QualifyingPostTypeCreateManyDiscountRuleInputEnvelope> = z.object({
+  data: z.union([ z.lazy(() => QualifyingPostTypeCreateManyDiscountRuleInputSchema),z.lazy(() => QualifyingPostTypeCreateManyDiscountRuleInputSchema).array() ]),
+  skipDuplicates: z.boolean().optional()
+}).strict();
+
+export const QualifyingPostTypeUpsertWithWhereUniqueWithoutDiscountRuleInputSchema: z.ZodType<Prisma.QualifyingPostTypeUpsertWithWhereUniqueWithoutDiscountRuleInput> = z.object({
+  where: z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema),
+  update: z.union([ z.lazy(() => QualifyingPostTypeUpdateWithoutDiscountRuleInputSchema),z.lazy(() => QualifyingPostTypeUncheckedUpdateWithoutDiscountRuleInputSchema) ]),
+  create: z.union([ z.lazy(() => QualifyingPostTypeCreateWithoutDiscountRuleInputSchema),z.lazy(() => QualifyingPostTypeUncheckedCreateWithoutDiscountRuleInputSchema) ]),
+}).strict();
+
+export const QualifyingPostTypeUpdateWithWhereUniqueWithoutDiscountRuleInputSchema: z.ZodType<Prisma.QualifyingPostTypeUpdateWithWhereUniqueWithoutDiscountRuleInput> = z.object({
+  where: z.lazy(() => QualifyingPostTypeWhereUniqueInputSchema),
+  data: z.union([ z.lazy(() => QualifyingPostTypeUpdateWithoutDiscountRuleInputSchema),z.lazy(() => QualifyingPostTypeUncheckedUpdateWithoutDiscountRuleInputSchema) ]),
+}).strict();
+
+export const QualifyingPostTypeUpdateManyWithWhereWithoutDiscountRuleInputSchema: z.ZodType<Prisma.QualifyingPostTypeUpdateManyWithWhereWithoutDiscountRuleInput> = z.object({
+  where: z.lazy(() => QualifyingPostTypeScalarWhereInputSchema),
+  data: z.union([ z.lazy(() => QualifyingPostTypeUpdateManyMutationInputSchema),z.lazy(() => QualifyingPostTypeUncheckedUpdateManyWithoutDiscountRuleInputSchema) ]),
+}).strict();
+
+export const DiscountRuleCreateWithoutQualifyingPostsInputSchema: z.ZodType<Prisma.DiscountRuleCreateWithoutQualifyingPostsInput> = z.object({
+  id: z.string().uuid().optional(),
+  name: z.string(),
+  discountPercent: z.number(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional()
+}).strict();
+
+export const DiscountRuleUncheckedCreateWithoutQualifyingPostsInputSchema: z.ZodType<Prisma.DiscountRuleUncheckedCreateWithoutQualifyingPostsInput> = z.object({
+  id: z.string().uuid().optional(),
+  name: z.string(),
+  discountPercent: z.number(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional()
+}).strict();
+
+export const DiscountRuleCreateOrConnectWithoutQualifyingPostsInputSchema: z.ZodType<Prisma.DiscountRuleCreateOrConnectWithoutQualifyingPostsInput> = z.object({
+  where: z.lazy(() => DiscountRuleWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => DiscountRuleCreateWithoutQualifyingPostsInputSchema),z.lazy(() => DiscountRuleUncheckedCreateWithoutQualifyingPostsInputSchema) ]),
+}).strict();
+
+export const PostTypeCreateWithoutQualifyingPostsInputSchema: z.ZodType<Prisma.PostTypeCreateWithoutQualifyingPostsInput> = z.object({
+  id: z.string().uuid().optional(),
+  name: z.string(),
+  price: z.number(),
+  active: z.boolean().optional(),
+  order: z.number().int().optional()
+}).strict();
+
+export const PostTypeUncheckedCreateWithoutQualifyingPostsInputSchema: z.ZodType<Prisma.PostTypeUncheckedCreateWithoutQualifyingPostsInput> = z.object({
+  id: z.string().uuid().optional(),
+  name: z.string(),
+  price: z.number(),
+  active: z.boolean().optional(),
+  order: z.number().int().optional()
+}).strict();
+
+export const PostTypeCreateOrConnectWithoutQualifyingPostsInputSchema: z.ZodType<Prisma.PostTypeCreateOrConnectWithoutQualifyingPostsInput> = z.object({
+  where: z.lazy(() => PostTypeWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => PostTypeCreateWithoutQualifyingPostsInputSchema),z.lazy(() => PostTypeUncheckedCreateWithoutQualifyingPostsInputSchema) ]),
+}).strict();
+
+export const DiscountRuleUpsertWithoutQualifyingPostsInputSchema: z.ZodType<Prisma.DiscountRuleUpsertWithoutQualifyingPostsInput> = z.object({
+  update: z.union([ z.lazy(() => DiscountRuleUpdateWithoutQualifyingPostsInputSchema),z.lazy(() => DiscountRuleUncheckedUpdateWithoutQualifyingPostsInputSchema) ]),
+  create: z.union([ z.lazy(() => DiscountRuleCreateWithoutQualifyingPostsInputSchema),z.lazy(() => DiscountRuleUncheckedCreateWithoutQualifyingPostsInputSchema) ]),
+  where: z.lazy(() => DiscountRuleWhereInputSchema).optional()
+}).strict();
+
+export const DiscountRuleUpdateToOneWithWhereWithoutQualifyingPostsInputSchema: z.ZodType<Prisma.DiscountRuleUpdateToOneWithWhereWithoutQualifyingPostsInput> = z.object({
+  where: z.lazy(() => DiscountRuleWhereInputSchema).optional(),
+  data: z.union([ z.lazy(() => DiscountRuleUpdateWithoutQualifyingPostsInputSchema),z.lazy(() => DiscountRuleUncheckedUpdateWithoutQualifyingPostsInputSchema) ]),
+}).strict();
+
+export const DiscountRuleUpdateWithoutQualifyingPostsInputSchema: z.ZodType<Prisma.DiscountRuleUpdateWithoutQualifyingPostsInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  discountPercent: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const DiscountRuleUncheckedUpdateWithoutQualifyingPostsInputSchema: z.ZodType<Prisma.DiscountRuleUncheckedUpdateWithoutQualifyingPostsInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  discountPercent: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const PostTypeUpsertWithoutQualifyingPostsInputSchema: z.ZodType<Prisma.PostTypeUpsertWithoutQualifyingPostsInput> = z.object({
+  update: z.union([ z.lazy(() => PostTypeUpdateWithoutQualifyingPostsInputSchema),z.lazy(() => PostTypeUncheckedUpdateWithoutQualifyingPostsInputSchema) ]),
+  create: z.union([ z.lazy(() => PostTypeCreateWithoutQualifyingPostsInputSchema),z.lazy(() => PostTypeUncheckedCreateWithoutQualifyingPostsInputSchema) ]),
+  where: z.lazy(() => PostTypeWhereInputSchema).optional()
+}).strict();
+
+export const PostTypeUpdateToOneWithWhereWithoutQualifyingPostsInputSchema: z.ZodType<Prisma.PostTypeUpdateToOneWithWhereWithoutQualifyingPostsInput> = z.object({
+  where: z.lazy(() => PostTypeWhereInputSchema).optional(),
+  data: z.union([ z.lazy(() => PostTypeUpdateWithoutQualifyingPostsInputSchema),z.lazy(() => PostTypeUncheckedUpdateWithoutQualifyingPostsInputSchema) ]),
+}).strict();
+
+export const PostTypeUpdateWithoutQualifyingPostsInputSchema: z.ZodType<Prisma.PostTypeUpdateWithoutQualifyingPostsInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  price: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  active: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  order: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const PostTypeUncheckedUpdateWithoutQualifyingPostsInputSchema: z.ZodType<Prisma.PostTypeUncheckedUpdateWithoutQualifyingPostsInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  price: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  active: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  order: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
 export const AccountCreateManyUserInputSchema: z.ZodType<Prisma.AccountCreateManyUserInput> = z.object({
   type: z.string(),
   provider: z.string(),
@@ -3193,6 +4282,54 @@ export const LinkClickUncheckedUpdateWithoutLinkInputSchema: z.ZodType<Prisma.Li
 export const LinkClickUncheckedUpdateManyWithoutLinkInputSchema: z.ZodType<Prisma.LinkClickUncheckedUpdateManyWithoutLinkInput> = z.object({
   id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   datetime: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const QualifyingPostTypeCreateManyPostTypeInputSchema: z.ZodType<Prisma.QualifyingPostTypeCreateManyPostTypeInput> = z.object({
+  id: z.string().uuid().optional(),
+  discountRuleId: z.string(),
+  quantity: z.number().int()
+}).strict();
+
+export const QualifyingPostTypeUpdateWithoutPostTypeInputSchema: z.ZodType<Prisma.QualifyingPostTypeUpdateWithoutPostTypeInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  quantity: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  discountRule: z.lazy(() => DiscountRuleUpdateOneRequiredWithoutQualifyingPostsNestedInputSchema).optional()
+}).strict();
+
+export const QualifyingPostTypeUncheckedUpdateWithoutPostTypeInputSchema: z.ZodType<Prisma.QualifyingPostTypeUncheckedUpdateWithoutPostTypeInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  discountRuleId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  quantity: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const QualifyingPostTypeUncheckedUpdateManyWithoutPostTypeInputSchema: z.ZodType<Prisma.QualifyingPostTypeUncheckedUpdateManyWithoutPostTypeInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  discountRuleId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  quantity: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const QualifyingPostTypeCreateManyDiscountRuleInputSchema: z.ZodType<Prisma.QualifyingPostTypeCreateManyDiscountRuleInput> = z.object({
+  id: z.string().uuid().optional(),
+  postTypeId: z.string(),
+  quantity: z.number().int()
+}).strict();
+
+export const QualifyingPostTypeUpdateWithoutDiscountRuleInputSchema: z.ZodType<Prisma.QualifyingPostTypeUpdateWithoutDiscountRuleInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  quantity: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  postType: z.lazy(() => PostTypeUpdateOneRequiredWithoutQualifyingPostsNestedInputSchema).optional()
+}).strict();
+
+export const QualifyingPostTypeUncheckedUpdateWithoutDiscountRuleInputSchema: z.ZodType<Prisma.QualifyingPostTypeUncheckedUpdateWithoutDiscountRuleInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  postTypeId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  quantity: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const QualifyingPostTypeUncheckedUpdateManyWithoutDiscountRuleInputSchema: z.ZodType<Prisma.QualifyingPostTypeUncheckedUpdateManyWithoutDiscountRuleInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  postTypeId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  quantity: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 /////////////////////////////////////////
@@ -3690,6 +4827,249 @@ export const LinkClickFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.LinkClickFin
   where: LinkClickWhereUniqueInputSchema,
 }).strict() ;
 
+export const PostTypeFindFirstArgsSchema: z.ZodType<Prisma.PostTypeFindFirstArgs> = z.object({
+  select: PostTypeSelectSchema.optional(),
+  include: PostTypeIncludeSchema.optional(),
+  where: PostTypeWhereInputSchema.optional(),
+  orderBy: z.union([ PostTypeOrderByWithRelationInputSchema.array(),PostTypeOrderByWithRelationInputSchema ]).optional(),
+  cursor: PostTypeWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ PostTypeScalarFieldEnumSchema,PostTypeScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const PostTypeFindFirstOrThrowArgsSchema: z.ZodType<Prisma.PostTypeFindFirstOrThrowArgs> = z.object({
+  select: PostTypeSelectSchema.optional(),
+  include: PostTypeIncludeSchema.optional(),
+  where: PostTypeWhereInputSchema.optional(),
+  orderBy: z.union([ PostTypeOrderByWithRelationInputSchema.array(),PostTypeOrderByWithRelationInputSchema ]).optional(),
+  cursor: PostTypeWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ PostTypeScalarFieldEnumSchema,PostTypeScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const PostTypeFindManyArgsSchema: z.ZodType<Prisma.PostTypeFindManyArgs> = z.object({
+  select: PostTypeSelectSchema.optional(),
+  include: PostTypeIncludeSchema.optional(),
+  where: PostTypeWhereInputSchema.optional(),
+  orderBy: z.union([ PostTypeOrderByWithRelationInputSchema.array(),PostTypeOrderByWithRelationInputSchema ]).optional(),
+  cursor: PostTypeWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ PostTypeScalarFieldEnumSchema,PostTypeScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const PostTypeAggregateArgsSchema: z.ZodType<Prisma.PostTypeAggregateArgs> = z.object({
+  where: PostTypeWhereInputSchema.optional(),
+  orderBy: z.union([ PostTypeOrderByWithRelationInputSchema.array(),PostTypeOrderByWithRelationInputSchema ]).optional(),
+  cursor: PostTypeWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const PostTypeGroupByArgsSchema: z.ZodType<Prisma.PostTypeGroupByArgs> = z.object({
+  where: PostTypeWhereInputSchema.optional(),
+  orderBy: z.union([ PostTypeOrderByWithAggregationInputSchema.array(),PostTypeOrderByWithAggregationInputSchema ]).optional(),
+  by: PostTypeScalarFieldEnumSchema.array(),
+  having: PostTypeScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const PostTypeFindUniqueArgsSchema: z.ZodType<Prisma.PostTypeFindUniqueArgs> = z.object({
+  select: PostTypeSelectSchema.optional(),
+  include: PostTypeIncludeSchema.optional(),
+  where: PostTypeWhereUniqueInputSchema,
+}).strict() ;
+
+export const PostTypeFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.PostTypeFindUniqueOrThrowArgs> = z.object({
+  select: PostTypeSelectSchema.optional(),
+  include: PostTypeIncludeSchema.optional(),
+  where: PostTypeWhereUniqueInputSchema,
+}).strict() ;
+
+export const DiscountRuleFindFirstArgsSchema: z.ZodType<Prisma.DiscountRuleFindFirstArgs> = z.object({
+  select: DiscountRuleSelectSchema.optional(),
+  include: DiscountRuleIncludeSchema.optional(),
+  where: DiscountRuleWhereInputSchema.optional(),
+  orderBy: z.union([ DiscountRuleOrderByWithRelationInputSchema.array(),DiscountRuleOrderByWithRelationInputSchema ]).optional(),
+  cursor: DiscountRuleWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ DiscountRuleScalarFieldEnumSchema,DiscountRuleScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const DiscountRuleFindFirstOrThrowArgsSchema: z.ZodType<Prisma.DiscountRuleFindFirstOrThrowArgs> = z.object({
+  select: DiscountRuleSelectSchema.optional(),
+  include: DiscountRuleIncludeSchema.optional(),
+  where: DiscountRuleWhereInputSchema.optional(),
+  orderBy: z.union([ DiscountRuleOrderByWithRelationInputSchema.array(),DiscountRuleOrderByWithRelationInputSchema ]).optional(),
+  cursor: DiscountRuleWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ DiscountRuleScalarFieldEnumSchema,DiscountRuleScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const DiscountRuleFindManyArgsSchema: z.ZodType<Prisma.DiscountRuleFindManyArgs> = z.object({
+  select: DiscountRuleSelectSchema.optional(),
+  include: DiscountRuleIncludeSchema.optional(),
+  where: DiscountRuleWhereInputSchema.optional(),
+  orderBy: z.union([ DiscountRuleOrderByWithRelationInputSchema.array(),DiscountRuleOrderByWithRelationInputSchema ]).optional(),
+  cursor: DiscountRuleWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ DiscountRuleScalarFieldEnumSchema,DiscountRuleScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const DiscountRuleAggregateArgsSchema: z.ZodType<Prisma.DiscountRuleAggregateArgs> = z.object({
+  where: DiscountRuleWhereInputSchema.optional(),
+  orderBy: z.union([ DiscountRuleOrderByWithRelationInputSchema.array(),DiscountRuleOrderByWithRelationInputSchema ]).optional(),
+  cursor: DiscountRuleWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const DiscountRuleGroupByArgsSchema: z.ZodType<Prisma.DiscountRuleGroupByArgs> = z.object({
+  where: DiscountRuleWhereInputSchema.optional(),
+  orderBy: z.union([ DiscountRuleOrderByWithAggregationInputSchema.array(),DiscountRuleOrderByWithAggregationInputSchema ]).optional(),
+  by: DiscountRuleScalarFieldEnumSchema.array(),
+  having: DiscountRuleScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const DiscountRuleFindUniqueArgsSchema: z.ZodType<Prisma.DiscountRuleFindUniqueArgs> = z.object({
+  select: DiscountRuleSelectSchema.optional(),
+  include: DiscountRuleIncludeSchema.optional(),
+  where: DiscountRuleWhereUniqueInputSchema,
+}).strict() ;
+
+export const DiscountRuleFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.DiscountRuleFindUniqueOrThrowArgs> = z.object({
+  select: DiscountRuleSelectSchema.optional(),
+  include: DiscountRuleIncludeSchema.optional(),
+  where: DiscountRuleWhereUniqueInputSchema,
+}).strict() ;
+
+export const QualifyingPostTypeFindFirstArgsSchema: z.ZodType<Prisma.QualifyingPostTypeFindFirstArgs> = z.object({
+  select: QualifyingPostTypeSelectSchema.optional(),
+  include: QualifyingPostTypeIncludeSchema.optional(),
+  where: QualifyingPostTypeWhereInputSchema.optional(),
+  orderBy: z.union([ QualifyingPostTypeOrderByWithRelationInputSchema.array(),QualifyingPostTypeOrderByWithRelationInputSchema ]).optional(),
+  cursor: QualifyingPostTypeWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ QualifyingPostTypeScalarFieldEnumSchema,QualifyingPostTypeScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const QualifyingPostTypeFindFirstOrThrowArgsSchema: z.ZodType<Prisma.QualifyingPostTypeFindFirstOrThrowArgs> = z.object({
+  select: QualifyingPostTypeSelectSchema.optional(),
+  include: QualifyingPostTypeIncludeSchema.optional(),
+  where: QualifyingPostTypeWhereInputSchema.optional(),
+  orderBy: z.union([ QualifyingPostTypeOrderByWithRelationInputSchema.array(),QualifyingPostTypeOrderByWithRelationInputSchema ]).optional(),
+  cursor: QualifyingPostTypeWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ QualifyingPostTypeScalarFieldEnumSchema,QualifyingPostTypeScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const QualifyingPostTypeFindManyArgsSchema: z.ZodType<Prisma.QualifyingPostTypeFindManyArgs> = z.object({
+  select: QualifyingPostTypeSelectSchema.optional(),
+  include: QualifyingPostTypeIncludeSchema.optional(),
+  where: QualifyingPostTypeWhereInputSchema.optional(),
+  orderBy: z.union([ QualifyingPostTypeOrderByWithRelationInputSchema.array(),QualifyingPostTypeOrderByWithRelationInputSchema ]).optional(),
+  cursor: QualifyingPostTypeWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ QualifyingPostTypeScalarFieldEnumSchema,QualifyingPostTypeScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const QualifyingPostTypeAggregateArgsSchema: z.ZodType<Prisma.QualifyingPostTypeAggregateArgs> = z.object({
+  where: QualifyingPostTypeWhereInputSchema.optional(),
+  orderBy: z.union([ QualifyingPostTypeOrderByWithRelationInputSchema.array(),QualifyingPostTypeOrderByWithRelationInputSchema ]).optional(),
+  cursor: QualifyingPostTypeWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const QualifyingPostTypeGroupByArgsSchema: z.ZodType<Prisma.QualifyingPostTypeGroupByArgs> = z.object({
+  where: QualifyingPostTypeWhereInputSchema.optional(),
+  orderBy: z.union([ QualifyingPostTypeOrderByWithAggregationInputSchema.array(),QualifyingPostTypeOrderByWithAggregationInputSchema ]).optional(),
+  by: QualifyingPostTypeScalarFieldEnumSchema.array(),
+  having: QualifyingPostTypeScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const QualifyingPostTypeFindUniqueArgsSchema: z.ZodType<Prisma.QualifyingPostTypeFindUniqueArgs> = z.object({
+  select: QualifyingPostTypeSelectSchema.optional(),
+  include: QualifyingPostTypeIncludeSchema.optional(),
+  where: QualifyingPostTypeWhereUniqueInputSchema,
+}).strict() ;
+
+export const QualifyingPostTypeFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.QualifyingPostTypeFindUniqueOrThrowArgs> = z.object({
+  select: QualifyingPostTypeSelectSchema.optional(),
+  include: QualifyingPostTypeIncludeSchema.optional(),
+  where: QualifyingPostTypeWhereUniqueInputSchema,
+}).strict() ;
+
+export const PromotionTypeFindFirstArgsSchema: z.ZodType<Prisma.PromotionTypeFindFirstArgs> = z.object({
+  select: PromotionTypeSelectSchema.optional(),
+  where: PromotionTypeWhereInputSchema.optional(),
+  orderBy: z.union([ PromotionTypeOrderByWithRelationInputSchema.array(),PromotionTypeOrderByWithRelationInputSchema ]).optional(),
+  cursor: PromotionTypeWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ PromotionTypeScalarFieldEnumSchema,PromotionTypeScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const PromotionTypeFindFirstOrThrowArgsSchema: z.ZodType<Prisma.PromotionTypeFindFirstOrThrowArgs> = z.object({
+  select: PromotionTypeSelectSchema.optional(),
+  where: PromotionTypeWhereInputSchema.optional(),
+  orderBy: z.union([ PromotionTypeOrderByWithRelationInputSchema.array(),PromotionTypeOrderByWithRelationInputSchema ]).optional(),
+  cursor: PromotionTypeWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ PromotionTypeScalarFieldEnumSchema,PromotionTypeScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const PromotionTypeFindManyArgsSchema: z.ZodType<Prisma.PromotionTypeFindManyArgs> = z.object({
+  select: PromotionTypeSelectSchema.optional(),
+  where: PromotionTypeWhereInputSchema.optional(),
+  orderBy: z.union([ PromotionTypeOrderByWithRelationInputSchema.array(),PromotionTypeOrderByWithRelationInputSchema ]).optional(),
+  cursor: PromotionTypeWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ PromotionTypeScalarFieldEnumSchema,PromotionTypeScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const PromotionTypeAggregateArgsSchema: z.ZodType<Prisma.PromotionTypeAggregateArgs> = z.object({
+  where: PromotionTypeWhereInputSchema.optional(),
+  orderBy: z.union([ PromotionTypeOrderByWithRelationInputSchema.array(),PromotionTypeOrderByWithRelationInputSchema ]).optional(),
+  cursor: PromotionTypeWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const PromotionTypeGroupByArgsSchema: z.ZodType<Prisma.PromotionTypeGroupByArgs> = z.object({
+  where: PromotionTypeWhereInputSchema.optional(),
+  orderBy: z.union([ PromotionTypeOrderByWithAggregationInputSchema.array(),PromotionTypeOrderByWithAggregationInputSchema ]).optional(),
+  by: PromotionTypeScalarFieldEnumSchema.array(),
+  having: PromotionTypeScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const PromotionTypeFindUniqueArgsSchema: z.ZodType<Prisma.PromotionTypeFindUniqueArgs> = z.object({
+  select: PromotionTypeSelectSchema.optional(),
+  where: PromotionTypeWhereUniqueInputSchema,
+}).strict() ;
+
+export const PromotionTypeFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.PromotionTypeFindUniqueOrThrowArgs> = z.object({
+  select: PromotionTypeSelectSchema.optional(),
+  where: PromotionTypeWhereUniqueInputSchema,
+}).strict() ;
+
 export const UserCreateArgsSchema: z.ZodType<Prisma.UserCreateArgs> = z.object({
   select: UserSelectSchema.optional(),
   include: UserIncludeSchema.optional(),
@@ -4052,4 +5432,184 @@ export const LinkClickUpdateManyArgsSchema: z.ZodType<Prisma.LinkClickUpdateMany
 
 export const LinkClickDeleteManyArgsSchema: z.ZodType<Prisma.LinkClickDeleteManyArgs> = z.object({
   where: LinkClickWhereInputSchema.optional(),
+}).strict() ;
+
+export const PostTypeCreateArgsSchema: z.ZodType<Prisma.PostTypeCreateArgs> = z.object({
+  select: PostTypeSelectSchema.optional(),
+  include: PostTypeIncludeSchema.optional(),
+  data: z.union([ PostTypeCreateInputSchema,PostTypeUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const PostTypeUpsertArgsSchema: z.ZodType<Prisma.PostTypeUpsertArgs> = z.object({
+  select: PostTypeSelectSchema.optional(),
+  include: PostTypeIncludeSchema.optional(),
+  where: PostTypeWhereUniqueInputSchema,
+  create: z.union([ PostTypeCreateInputSchema,PostTypeUncheckedCreateInputSchema ]),
+  update: z.union([ PostTypeUpdateInputSchema,PostTypeUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const PostTypeCreateManyArgsSchema: z.ZodType<Prisma.PostTypeCreateManyArgs> = z.object({
+  data: z.union([ PostTypeCreateManyInputSchema,PostTypeCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const PostTypeCreateManyAndReturnArgsSchema: z.ZodType<Prisma.PostTypeCreateManyAndReturnArgs> = z.object({
+  data: z.union([ PostTypeCreateManyInputSchema,PostTypeCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const PostTypeDeleteArgsSchema: z.ZodType<Prisma.PostTypeDeleteArgs> = z.object({
+  select: PostTypeSelectSchema.optional(),
+  include: PostTypeIncludeSchema.optional(),
+  where: PostTypeWhereUniqueInputSchema,
+}).strict() ;
+
+export const PostTypeUpdateArgsSchema: z.ZodType<Prisma.PostTypeUpdateArgs> = z.object({
+  select: PostTypeSelectSchema.optional(),
+  include: PostTypeIncludeSchema.optional(),
+  data: z.union([ PostTypeUpdateInputSchema,PostTypeUncheckedUpdateInputSchema ]),
+  where: PostTypeWhereUniqueInputSchema,
+}).strict() ;
+
+export const PostTypeUpdateManyArgsSchema: z.ZodType<Prisma.PostTypeUpdateManyArgs> = z.object({
+  data: z.union([ PostTypeUpdateManyMutationInputSchema,PostTypeUncheckedUpdateManyInputSchema ]),
+  where: PostTypeWhereInputSchema.optional(),
+}).strict() ;
+
+export const PostTypeDeleteManyArgsSchema: z.ZodType<Prisma.PostTypeDeleteManyArgs> = z.object({
+  where: PostTypeWhereInputSchema.optional(),
+}).strict() ;
+
+export const DiscountRuleCreateArgsSchema: z.ZodType<Prisma.DiscountRuleCreateArgs> = z.object({
+  select: DiscountRuleSelectSchema.optional(),
+  include: DiscountRuleIncludeSchema.optional(),
+  data: z.union([ DiscountRuleCreateInputSchema,DiscountRuleUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const DiscountRuleUpsertArgsSchema: z.ZodType<Prisma.DiscountRuleUpsertArgs> = z.object({
+  select: DiscountRuleSelectSchema.optional(),
+  include: DiscountRuleIncludeSchema.optional(),
+  where: DiscountRuleWhereUniqueInputSchema,
+  create: z.union([ DiscountRuleCreateInputSchema,DiscountRuleUncheckedCreateInputSchema ]),
+  update: z.union([ DiscountRuleUpdateInputSchema,DiscountRuleUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const DiscountRuleCreateManyArgsSchema: z.ZodType<Prisma.DiscountRuleCreateManyArgs> = z.object({
+  data: z.union([ DiscountRuleCreateManyInputSchema,DiscountRuleCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const DiscountRuleCreateManyAndReturnArgsSchema: z.ZodType<Prisma.DiscountRuleCreateManyAndReturnArgs> = z.object({
+  data: z.union([ DiscountRuleCreateManyInputSchema,DiscountRuleCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const DiscountRuleDeleteArgsSchema: z.ZodType<Prisma.DiscountRuleDeleteArgs> = z.object({
+  select: DiscountRuleSelectSchema.optional(),
+  include: DiscountRuleIncludeSchema.optional(),
+  where: DiscountRuleWhereUniqueInputSchema,
+}).strict() ;
+
+export const DiscountRuleUpdateArgsSchema: z.ZodType<Prisma.DiscountRuleUpdateArgs> = z.object({
+  select: DiscountRuleSelectSchema.optional(),
+  include: DiscountRuleIncludeSchema.optional(),
+  data: z.union([ DiscountRuleUpdateInputSchema,DiscountRuleUncheckedUpdateInputSchema ]),
+  where: DiscountRuleWhereUniqueInputSchema,
+}).strict() ;
+
+export const DiscountRuleUpdateManyArgsSchema: z.ZodType<Prisma.DiscountRuleUpdateManyArgs> = z.object({
+  data: z.union([ DiscountRuleUpdateManyMutationInputSchema,DiscountRuleUncheckedUpdateManyInputSchema ]),
+  where: DiscountRuleWhereInputSchema.optional(),
+}).strict() ;
+
+export const DiscountRuleDeleteManyArgsSchema: z.ZodType<Prisma.DiscountRuleDeleteManyArgs> = z.object({
+  where: DiscountRuleWhereInputSchema.optional(),
+}).strict() ;
+
+export const QualifyingPostTypeCreateArgsSchema: z.ZodType<Prisma.QualifyingPostTypeCreateArgs> = z.object({
+  select: QualifyingPostTypeSelectSchema.optional(),
+  include: QualifyingPostTypeIncludeSchema.optional(),
+  data: z.union([ QualifyingPostTypeCreateInputSchema,QualifyingPostTypeUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const QualifyingPostTypeUpsertArgsSchema: z.ZodType<Prisma.QualifyingPostTypeUpsertArgs> = z.object({
+  select: QualifyingPostTypeSelectSchema.optional(),
+  include: QualifyingPostTypeIncludeSchema.optional(),
+  where: QualifyingPostTypeWhereUniqueInputSchema,
+  create: z.union([ QualifyingPostTypeCreateInputSchema,QualifyingPostTypeUncheckedCreateInputSchema ]),
+  update: z.union([ QualifyingPostTypeUpdateInputSchema,QualifyingPostTypeUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const QualifyingPostTypeCreateManyArgsSchema: z.ZodType<Prisma.QualifyingPostTypeCreateManyArgs> = z.object({
+  data: z.union([ QualifyingPostTypeCreateManyInputSchema,QualifyingPostTypeCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const QualifyingPostTypeCreateManyAndReturnArgsSchema: z.ZodType<Prisma.QualifyingPostTypeCreateManyAndReturnArgs> = z.object({
+  data: z.union([ QualifyingPostTypeCreateManyInputSchema,QualifyingPostTypeCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const QualifyingPostTypeDeleteArgsSchema: z.ZodType<Prisma.QualifyingPostTypeDeleteArgs> = z.object({
+  select: QualifyingPostTypeSelectSchema.optional(),
+  include: QualifyingPostTypeIncludeSchema.optional(),
+  where: QualifyingPostTypeWhereUniqueInputSchema,
+}).strict() ;
+
+export const QualifyingPostTypeUpdateArgsSchema: z.ZodType<Prisma.QualifyingPostTypeUpdateArgs> = z.object({
+  select: QualifyingPostTypeSelectSchema.optional(),
+  include: QualifyingPostTypeIncludeSchema.optional(),
+  data: z.union([ QualifyingPostTypeUpdateInputSchema,QualifyingPostTypeUncheckedUpdateInputSchema ]),
+  where: QualifyingPostTypeWhereUniqueInputSchema,
+}).strict() ;
+
+export const QualifyingPostTypeUpdateManyArgsSchema: z.ZodType<Prisma.QualifyingPostTypeUpdateManyArgs> = z.object({
+  data: z.union([ QualifyingPostTypeUpdateManyMutationInputSchema,QualifyingPostTypeUncheckedUpdateManyInputSchema ]),
+  where: QualifyingPostTypeWhereInputSchema.optional(),
+}).strict() ;
+
+export const QualifyingPostTypeDeleteManyArgsSchema: z.ZodType<Prisma.QualifyingPostTypeDeleteManyArgs> = z.object({
+  where: QualifyingPostTypeWhereInputSchema.optional(),
+}).strict() ;
+
+export const PromotionTypeCreateArgsSchema: z.ZodType<Prisma.PromotionTypeCreateArgs> = z.object({
+  select: PromotionTypeSelectSchema.optional(),
+  data: z.union([ PromotionTypeCreateInputSchema,PromotionTypeUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const PromotionTypeUpsertArgsSchema: z.ZodType<Prisma.PromotionTypeUpsertArgs> = z.object({
+  select: PromotionTypeSelectSchema.optional(),
+  where: PromotionTypeWhereUniqueInputSchema,
+  create: z.union([ PromotionTypeCreateInputSchema,PromotionTypeUncheckedCreateInputSchema ]),
+  update: z.union([ PromotionTypeUpdateInputSchema,PromotionTypeUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const PromotionTypeCreateManyArgsSchema: z.ZodType<Prisma.PromotionTypeCreateManyArgs> = z.object({
+  data: z.union([ PromotionTypeCreateManyInputSchema,PromotionTypeCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const PromotionTypeCreateManyAndReturnArgsSchema: z.ZodType<Prisma.PromotionTypeCreateManyAndReturnArgs> = z.object({
+  data: z.union([ PromotionTypeCreateManyInputSchema,PromotionTypeCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const PromotionTypeDeleteArgsSchema: z.ZodType<Prisma.PromotionTypeDeleteArgs> = z.object({
+  select: PromotionTypeSelectSchema.optional(),
+  where: PromotionTypeWhereUniqueInputSchema,
+}).strict() ;
+
+export const PromotionTypeUpdateArgsSchema: z.ZodType<Prisma.PromotionTypeUpdateArgs> = z.object({
+  select: PromotionTypeSelectSchema.optional(),
+  data: z.union([ PromotionTypeUpdateInputSchema,PromotionTypeUncheckedUpdateInputSchema ]),
+  where: PromotionTypeWhereUniqueInputSchema,
+}).strict() ;
+
+export const PromotionTypeUpdateManyArgsSchema: z.ZodType<Prisma.PromotionTypeUpdateManyArgs> = z.object({
+  data: z.union([ PromotionTypeUpdateManyMutationInputSchema,PromotionTypeUncheckedUpdateManyInputSchema ]),
+  where: PromotionTypeWhereInputSchema.optional(),
+}).strict() ;
+
+export const PromotionTypeDeleteManyArgsSchema: z.ZodType<Prisma.PromotionTypeDeleteManyArgs> = z.object({
+  where: PromotionTypeWhereInputSchema.optional(),
 }).strict() ;
