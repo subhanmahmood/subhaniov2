@@ -160,9 +160,11 @@ model QualifyingPostType {
 }
 
 model PromotionType {
-  id    String @id @default(uuid())
-  name  String
-  price Float
+  id     String  @id @default(uuid())
+  name   String
+  price  Float
+  active Boolean @default(true)
+  order  Int     @default(autoincrement())
 
   @@schema("public")
 }

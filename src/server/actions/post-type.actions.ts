@@ -7,12 +7,16 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 export const createPostTypeAction = authenticatedAction.createServerAction().input(postTypeFormSchema).handler(async ({ input }) => {
+    "use server";
+
     await createPostTypeUseCase(input)
 
     revalidatePath('/admin/post-types')
 })
 
 export const updatePostTypeAction = authenticatedAction.createServerAction().input(postTypeFormSchema).handler(async ({ input }) => {
+    "use server";
+
     await updatePostTypeUseCase(input)
 
     revalidatePath('/admin/post-types')

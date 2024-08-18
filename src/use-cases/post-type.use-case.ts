@@ -8,6 +8,7 @@ export const createPostTypeUseCase = async (values: z.infer<typeof postTypeFormS
     const valuesToAdd = {
         name: values.name,
         price: values.price,
+        active: values.active,
     }
 
     await db.postType.create({ data: valuesToAdd })
@@ -18,6 +19,7 @@ export const updatePostTypeUseCase = async (values: z.infer<typeof postTypeFormS
     const valuesToUpdate = {
         name: values.name,
         price: values.price,
+        active: values.active,
     }
 
     await db.postType.update({ where: { id: values.id }, data: valuesToUpdate })

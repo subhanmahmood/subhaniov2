@@ -14,7 +14,7 @@ const SortableItem: React.FC<SortableItemProps> = ({ children, id }) => {
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id })
 
     return <div
-        className='py-2 rounded-md flex items-center gap-2 w-full'
+        className='flex items-center gap-2 w-full'
         style={{
             transform: CSS.Transform.toString(transform),
             transition: transition

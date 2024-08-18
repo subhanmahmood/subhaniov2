@@ -15,13 +15,17 @@ const linkClasses = "text-slate-500 hover:text-slate-900 transition-colors durat
 type LinkItemProps = { name: string, url: string, id: string, onClick?: () => void, asLink?: boolean } & { session: Session | null }
 
 export const LinkItem = ({ name, url, id, session, onClick, asLink }: LinkItemProps) => {
+    const handleDelete = async () => {
+        await deleteLinkAction({ id })
+    }
+
     return <div className='flex items-center justify-between w-full'>
         {asLink ? <Link prefetch={true} href={url} target='_blank' onClick={onClick} className={clsx(linkClasses, "mr-2")}>{name}</Link> : <p>{name}</p>}
         {session && <div className='flex items-center'>
-            <Link prefetch={true} href={`/links/edit/${id}`}><Button className="px-2" variant={'ghost'}><Edit className='w-4 h-4' /></Button></Link>
+            <Link prefetch={true} href={`/admin/links/edit/${id}`}><Button className="px-2" variant={'ghost'}><Edit className='w-4 h-4' /></Button></Link>
 
             <ConfirmDialog
-                onConfirm={() => deleteLinkAction({ id })}
+                onConfirm={handleDelete}
                 title='Are you sure you want to delete this link?'
                 description="This action cannot be undone.">
                 <Button className="px-2" variant={'ghost'}><Trash2 className='w-4 h-4' /></Button>

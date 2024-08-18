@@ -1,8 +1,8 @@
 import { auth } from "@/auth";
 import { PageHeader } from "@/components/page-header";
-import PostTypeForm from "@/components/post-types/post-types-form";
+import EditTypeForm from "@/components/admin/post-types/edit-type-form";
 import { UnauthorizedError } from "@/lib/exception";
-import { getPostTypeAction } from "@/server/actions/post-type.actions";
+import { getPostTypeAction, updatePostTypeAction } from "@/server/actions/post-type.actions";
 import { redirect } from "next/navigation";
 
 export default async function EditPostType({ params }: { params: { id: string } }) {
@@ -20,9 +20,23 @@ export default async function EditPostType({ params }: { params: { id: string } 
         redirect('/post-types')
     }
 
-    return <div className="flex flex-col gap-4">
-        <PageHeader title={`${isEditing ? 'Edit' : 'Save'} Post Type`} />
+    const handleSubmit = async (values: Parameters<typeof updatePostTypeAction>[0]) => {
+        "use server";
 
-        <PostTypeForm id={params.id} postType={postType} />
+        await updatePostTypeAction(values);
+    };
+
+    return <div className="flex flex-col gap-4">
+        <PageHeader showBack={false} title={`${isEditing ? 'Edit' : 'Save'} Post Type`} />
+
+        <EditTypeForm 
+            submitAction={handleSubmit}
+            successPath="/admin/post-types"
+            id={params.id}
+            name={postType?.name}
+            price={postType?.price}
+            active={postType?.active}
+            order={postType?.order}
+        />
     </div>
 }

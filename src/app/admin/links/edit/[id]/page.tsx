@@ -21,9 +21,9 @@ export default async function EditLink({ params }: { params: { id: string } }) {
         redirect('/links')
     }
 
-    return <>
+    return <div>
         <PageHeader title={`${isEditing ? 'Edit' : 'Save'} Link`} />
 
         <LinkForm id={params.id} link={link} categories={categories} />
-    </>
+    </div>
 }

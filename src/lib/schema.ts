@@ -20,3 +20,15 @@ export const postTypeFormSchema = z.object({
     active: z.boolean().optional(),
     order: z.number().optional(),
 })
+
+export const promotionTypeFormSchema = z.object({
+    id: z.string().optional(),
+    name: z.string().min(1),
+    price: z.coerce
+    .number({
+      required_error: "Price is required",
+      invalid_type_error: "Price must be a number",
+    }).min(0),
+    active: z.boolean().optional(),
+    order: z.number().optional(),
+})

@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import { PageHeader } from "@/components/page-header";
 import { UnauthorizedError } from "@/lib/exception";
 import EditTypeForm from "@/components/admin/post-types/edit-type-form";
-import { createPostTypeAction } from "@/server/actions/post-type.actions";
+import { createPromotionTypeAction } from "@/server/actions/promo-type.actions";
 
 
 export default async function AddPostType() {
@@ -12,19 +12,20 @@ export default async function AddPostType() {
         throw new UnauthorizedError()
     }
 
-    const handleSubmit = async (values: Parameters<typeof createPostTypeAction>[0]) => {
+    const handleSubmit = async (values: Parameters<typeof createPromotionTypeAction>[0]) => {
         "use server";
-        
-        await createPostTypeAction(values);
+
+        await createPromotionTypeAction(values);
     };
+
 
     return <>
         <div className="flex gap-2">
 
             <div className="flex grow flex-col gap-2">
-                <PageHeader showBack={false} title="Add Post Type" />
+                <PageHeader showBack={false} title="Add Promotion Type" />
 
-                <EditTypeForm submitAction={handleSubmit} successPath="/admin/post-types" />
+                <EditTypeForm submitAction={handleSubmit} successPath="/admin/promo-types" />
             </div>
         </div>
 
