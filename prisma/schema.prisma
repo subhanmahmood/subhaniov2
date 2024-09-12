@@ -4,7 +4,7 @@ generator client {
 }
 
 generator zod {
-  provider       = "zod-prisma-types"
+  provider = "zod-prisma-types"
 }
 
 datasource db {
@@ -120,5 +120,50 @@ model LinkClick {
   link     Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
 
   @@index([linkId])
+  @@schema("public")
+}
+
+model PostType {
+  id       String  @id @default(uuid())
+  name     String
+  staticId String  @unique @default(uuid())
+  price    Float
+  active   Boolean @default(true)
+  order    Int     @default(autoincrement())
+
+  @@schema("public")
+}
+
+model PromotionType {
+  id       String  @id @default(uuid())
+  name     String
+  staticId String  @unique @default(uuid())
+  price    Float
+  active   Boolean @default(true)
+  order    Int     @default(autoincrement())
+
+  @@schema("public")
+}
+
+model Lead {
+  id                 String        @id @default(cuid())
+  email              String
+  name               String
+  companyName        String?
+  projectDescription String
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  CollabQuote        CollabQuote[]
+
+  @@schema("public")
+}
+
+model CollabQuote {
+  id        String   @id @default(cuid())
+  leadId    String
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@schema("public")
 }

@@ -16,11 +16,16 @@ type ConfirmDialogProps = {
     description?: string;
     cancelText?: string;
     confirmText?: string;
-    onConfirm: () => void;
+    onConfirm: () => Promise<void>;
     children: ReactNode;
 }
 
 const ConfirmDialog = ({ title, description, cancelText = 'Cancel', confirmText = 'Confirm', onConfirm, children }: ConfirmDialogProps) => {
+
+    const handleConfirm = async () => {
+        await onConfirm();
+    }
+
     return <AlertDialog>
         <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
         <AlertDialogContent>
@@ -32,7 +37,7 @@ const ConfirmDialog = ({ title, description, cancelText = 'Cancel', confirmText 
             </AlertDialogHeader>
             <AlertDialogFooter>
                 <AlertDialogCancel>{cancelText}</AlertDialogCancel>
-                <AlertDialogAction onClick={onConfirm}>{confirmText}</AlertDialogAction>
+                <AlertDialogAction onClick={handleConfirm}>{confirmText}</AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
     </AlertDialog>

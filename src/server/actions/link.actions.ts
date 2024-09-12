@@ -7,9 +7,6 @@ import { addLinkClickUseCase, createLinkUseCase, deleteLinkUseCase, getLinksUseC
 import { createServerAction } from "zsa";
 import { linkFormSchema } from "@/lib/schema";
 
-
-
-
 export const updateLinkAction = authenticatedAction.createServerAction().input(z.object({
     id: z.string(),
     values: linkFormSchema

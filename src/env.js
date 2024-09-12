@@ -13,6 +13,7 @@ export const env = createEnv({
       .enum(["development", "test", "production"])
       .default("development"),
     ALLOWED_EMAIL: z.string(),
+    COLLAB_FORM_PASSWORD: z.string(),
   },
 
   /**
@@ -37,6 +38,7 @@ export const env = createEnv({
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     ALLOWED_EMAIL: process.env.ALLOWED_EMAIL,
+    COLLAB_FORM_PASSWORD: process.env.COLLAB_FORM_PASSWORD,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

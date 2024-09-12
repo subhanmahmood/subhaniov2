@@ -1,5 +1,5 @@
 'use client'
-import SortableItem from '@/components/sortable-item';
+import SortableItem from '@/components/sortable/sortable-item';
 
 import {
     type DragEndEvent
