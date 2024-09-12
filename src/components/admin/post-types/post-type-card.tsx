@@ -10,7 +10,7 @@ import { formatCurrency } from "@/lib/currency";
 import { cn } from "@/lib/utils";
 import { deletePromotionTypeAction } from "@/server/actions/promo-type.actions";
 
-export default function PostTypeCard({ id, name, price, active, postType }: { id: string, name: string, price: number, active: boolean, postType: "post" | "promo" }) {
+export default function PostTypeCard({ id, name, staticId, price, active, postType }: { id: string, name: string, staticId: string, price: number, active: boolean, postType: "post" | "promo" }) {
 
     const handleDelete = async () => {
         if (postType === 'post') {  
@@ -24,7 +24,7 @@ export default function PostTypeCard({ id, name, price, active, postType }: { id
         <div className="w-full flex justify-between items-stretch gap-4">
             <Card className="w-full p-6 flex justify-between items-center gap-4">
                 <div className="grid gap-1">
-                    <div className="text-lg font-semibold">{name}</div>
+                    <div className="text-lg font-semibold">{name} <span className="text-muted-foreground">({staticId})</span></div>
                     <div className="text-3xl font-bold">{formatCurrency(price)}</div>
                 </div>
 

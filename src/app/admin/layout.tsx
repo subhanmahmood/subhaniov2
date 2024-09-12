@@ -1,14 +1,28 @@
+import { auth } from "@/auth";
 import AdminSidebar from "@/components/admin/sidebar";
+import { SignOutButton } from "@/components/auth/auth-buttons";
+import { UnauthorizedError } from "@/lib/exception";
 import { type ReactNode } from "react";
 
-export default async function LinkLayout({ children }: { children: ReactNode }) {
-    return <div className="p-4 grid grid-cols-[1fr_3fr] gap-8 max-w-3xl mx-auto">
-        <div className="flex flex-col gap-4">
-            <h1 className="text-lg font-semibold px-4">Admin</h1>
-            <div className="flex flex-col gap-1">
-                <AdminSidebar />
+export default async function AdminLayout({ children }: { children: ReactNode }) {
+    const session = await auth()
+
+    if (!session) {
+        throw new UnauthorizedError()
+    }
+
+    return (
+        <div className="container mx-auto p-4">
+            <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-8">
+                <aside className="md:sticky md:top-4 md:h-[calc(100vh-2rem)]">
+                    <h1 className="text-lg font-semibold mb-4">Admin</h1>
+                    <AdminSidebar />
+                    <div className="mt-4">
+                        <SignOutButton className="w-full" />
+                    </div>
+                </aside>
+                <main>{children}</main>
             </div>
         </div>
-        {children}
-    </div>
+    );
 }

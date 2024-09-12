@@ -1,5 +1,3 @@
-import { auth } from '@/auth';
-import { UnauthorizedError } from '@/lib/exception';
 import { getPostTypesAction } from '@/server/actions/post-type.actions';
 import { PageHeader } from '@/components/page-header';
 import PostTypeCard from '@/components/admin/post-types/post-type-card';
@@ -8,14 +6,9 @@ import { Button } from '@/components/ui/button';
 import { ArrowUpDown, Plus } from 'lucide-react';
 
 export default async function EditCategory() {
-
-    const session = await auth()
-
-    if (!session) {
-        throw new UnauthorizedError()
-    }
-
-    const [postTypes] = await getPostTypesAction();
+    const [postTypes, error] = await getPostTypesAction({});
+    console.log('postTypes', postTypes)
+    console.log('error', error)
 
     return <div>
         <div className="flex justify-between items-center">
@@ -34,6 +27,7 @@ export default async function EditCategory() {
                         name={postType.name}
                         price={postType.price}
                         active={postType.active ?? false}
+                        staticId={postType.staticId ?? ''}
                         postType="post"
                     />
                 )) : 'No post types yet'

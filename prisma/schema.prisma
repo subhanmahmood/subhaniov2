@@ -124,47 +124,46 @@ model LinkClick {
 }
 
 model PostType {
-  id              String               @id @default(uuid())
-  name            String
-  price           Float
-  qualifyingPosts QualifyingPostType[]
-  active          Boolean              @default(true)
-  order           Int                  @default(autoincrement())
+  id       String  @id @default(uuid())
+  name     String
+  staticId String  @unique @default(uuid())
+  price    Float
+  active   Boolean @default(true)
+  order    Int     @default(autoincrement())
 
-  @@schema("public")
-}
-
-model DiscountRule {
-  id              String               @id @default(uuid())
-  name            String
-  discountPercent Float
-  qualifyingPosts QualifyingPostType[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@schema("public")
-}
-
-model QualifyingPostType {
-  id             String @id @default(uuid())
-  discountRuleId String
-  postTypeId     String
-  quantity       Int
-
-  discountRule DiscountRule @relation(fields: [discountRuleId], references: [id], onDelete: Cascade)
-  postType     PostType     @relation(fields: [postTypeId], references: [id])
-
-  @@unique([discountRuleId, postTypeId])
   @@schema("public")
 }
 
 model PromotionType {
-  id     String  @id @default(uuid())
-  name   String
-  price  Float
-  active Boolean @default(true)
-  order  Int     @default(autoincrement())
+  id       String  @id @default(uuid())
+  name     String
+  staticId String  @unique @default(uuid())
+  price    Float
+  active   Boolean @default(true)
+  order    Int     @default(autoincrement())
+
+  @@schema("public")
+}
+
+model Lead {
+  id                 String        @id @default(cuid())
+  email              String
+  name               String
+  companyName        String?
+  projectDescription String
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  CollabQuote        CollabQuote[]
+
+  @@schema("public")
+}
+
+model CollabQuote {
+  id        String   @id @default(cuid())
+  leadId    String
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@schema("public")
 }

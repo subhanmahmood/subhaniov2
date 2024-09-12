@@ -9,6 +9,7 @@ export const createPostTypeUseCase = async (values: z.infer<typeof postTypeFormS
         name: values.name,
         price: values.price,
         active: values.active,
+        staticId: values.staticId,
     }
 
     await db.postType.create({ data: valuesToAdd })
@@ -20,6 +21,7 @@ export const updatePostTypeUseCase = async (values: z.infer<typeof postTypeFormS
         name: values.name,
         price: values.price,
         active: values.active,
+        staticId: values.staticId,
     }
 
     await db.postType.update({ where: { id: values.id }, data: valuesToUpdate })
@@ -30,8 +32,12 @@ export const getPostTypeUseCase = async (id: string) => {
     return postType;
 }
 
-export const getPostTypesUseCase = async () => {
-    const postTypes = await db.postType.findMany()
+export const getPostTypesUseCase = async (onlyShowActive = false) => {
+    const postTypes = await db.postType.findMany({ 
+        ...(onlyShowActive ? { where: { active: true } } : {}),
+        orderBy: { order: 'asc' }
+    })
+
     return postTypes;
 }
 

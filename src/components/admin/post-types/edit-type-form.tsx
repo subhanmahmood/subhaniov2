@@ -19,7 +19,7 @@ import { Button } from "../../ui/button";
 import { Switch } from "../../ui/switch";
 
 
-export default function EditTypeForm({ id, name, price, active, order, submitAction, successPath }: { id?: string, name?: string, price?: number, active?: boolean, order?: number, submitAction: (values: z.infer<typeof postTypeFormSchema>) => Promise<void>, successPath: string }) {
+export default function EditTypeForm({ id, name, staticId, price, active, order, submitAction, successPath }: { id?: string, name?: string, staticId?: string, price?: number, active?: boolean, order?: number, submitAction: (values: z.infer<typeof postTypeFormSchema>) => Promise<void>, successPath: string }) {
     const isEditing = !!id;
 
     const router = useRouter()
@@ -28,6 +28,7 @@ export default function EditTypeForm({ id, name, price, active, order, submitAct
         resolver: zodResolver(postTypeFormSchema),
         defaultValues: {
             name: name ?? '',
+            staticId: staticId ?? '',
             price: price ?? 0,
             id: id ?? '',
             active: active ?? false,
@@ -36,10 +37,11 @@ export default function EditTypeForm({ id, name, price, active, order, submitAct
     })
 
     useEffect(() => {
-        if (name ?? price ?? id ?? active ?? order) {
-            form.reset({ name, price, id, active, order })
+        if (id) {  // If we're editing (id exists), reset the form with all fields
+            console.log('resetting form with staticId', staticId)
+            form.reset({ name, staticId, price, id, active, order })
         }
-    }, [name, price, id, active, order, form])
+    }, [name, staticId, price, id, active, order, form])
 
     const onSubmit = async (values: z.infer<typeof postTypeFormSchema>) => {
         console.log('Form submitted with values:', values)
@@ -64,6 +66,17 @@ export default function EditTypeForm({ id, name, price, active, order, submitAct
                     <FormControl>
                         <Input placeholder='Name' {...field} />
                     </FormControl>
+                </FormItem>
+            )} />
+            <FormField control={form.control} name="staticId" render={({ field }) => (
+                <FormItem>
+                    <FormLabel>Static ID</FormLabel>
+                    <FormControl>
+                        <Input placeholder='STATIC_ID' {...field} />
+                    </FormControl>
+                    <FormDescription>
+                        Use uppercase letters, numbers, and underscores only (e.g., INSTAGRAM, TIKTOK)
+                    </FormDescription>
                 </FormItem>
             )} />
             <FormField control={form.control} name="price" render={({ field }) => (

@@ -1,6 +1,11 @@
 export function formatCurrency(amount: number, currency = 'GBP', locale = 'en-GB'): string {
-  return new Intl.NumberFormat(locale, {
+  const formatter = new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: currency,
-  }).format(amount);
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  });
+
+  const formattedAmount = formatter.format(amount);
+  return formattedAmount.endsWith('.00') ? formattedAmount.slice(0, -3) : formattedAmount;
 }

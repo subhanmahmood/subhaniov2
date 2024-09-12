@@ -16,8 +16,6 @@ import PostTypeCard from './post-types/post-type-card';
 import { updatePostTypesAction } from '@/server/actions/post-type.actions';
 import { updatePromotionTypesAction } from '@/server/actions/promo-type.actions';
 import { cn } from '@/lib/utils';
-import BackButton from '../back-button';
-import ConfirmDialog from '../confirm-dialog';
 
 type PostOrPromo = PostType | PromotionType
 
@@ -85,8 +83,8 @@ export default function PostOrPromoTypeSortable({ dbItems, postType, successUrl,
         setOrderHasChanged(hasOrderChanged());
     }, [items, hasOrderChanged])
 
-    const handleGoBack = async () => {
-        router.back()
+    const resetToOriginalOrder = () => {
+        setItems(dbItems ?? [])
     }
 
     return <SortableContainer onDragEnd={reorderItemList}>
@@ -101,25 +99,14 @@ export default function PostOrPromoTypeSortable({ dbItems, postType, successUrl,
                             price={item.price}
                             active={item.active ?? false}
                             postType={postType}
+                            staticId={item.staticId ?? ''}
                         />
                     </SortableItem>
                 ))}
             </SortableContext>
         </ul>
         <div className="flex justify-end gap-4 mt-4">
-            {!orderHasChanged ? (
-                <BackButton>
-                    <Button variant="outline">Go back</Button>
-                </BackButton>
-            ) : <ConfirmDialog
-                title='Are you sure you want to go back?'
-                description='Your changes will not be saved'
-                confirmText='Go back'
-                onConfirm={handleGoBack}
-            >
-                <Button variant="outline">Go back</Button>
-            </ConfirmDialog>}
-
+            <Button variant="outline" disabled={!orderHasChanged} onClick={resetToOriginalOrder}>Reset</Button>
             <Button disabled={!orderHasChanged} onClick={handleSave}>Save</Button>
         </div>
     </SortableContainer>

@@ -26,8 +26,10 @@ export const deletePromotionTypeAction = authenticatedAction.createServerAction(
     revalidatePath('/admin/promo-types')
 })
 
-export const getPromotionTypesAction = authenticatedAction.createServerAction().output(z.array(promotionTypeFormSchema)).handler(async () => {
-    return getPromotionTypesUseCase()
+export const getPromotionTypesAction = authenticatedAction.createServerAction().input(z.object({
+    onlyShowActive: z.boolean().optional()
+})).output(z.array(promotionTypeFormSchema)).handler(async ({ input }) => {
+    return getPromotionTypesUseCase(input.onlyShowActive)
 })
 
 export const getPromotionTypeAction = authenticatedAction.createServerAction().input(z.object({

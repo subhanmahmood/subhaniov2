@@ -30,8 +30,10 @@ export const deletePostTypeAction = authenticatedAction.createServerAction().inp
     revalidatePath('/admin/post-types')
 })
 
-export const getPostTypesAction = authenticatedAction.createServerAction().output(z.array(postTypeFormSchema)).handler(async () => {
-    return getPostTypesUseCase()
+export const getPostTypesAction = authenticatedAction.createServerAction().input(z.object({
+    onlyShowActive: z.boolean().optional()
+})).output(z.array(postTypeFormSchema)).handler(async ({ input }) => {
+    return getPostTypesUseCase(input.onlyShowActive)
 })
 
 export const getPostTypeAction = authenticatedAction.createServerAction().input(z.object({

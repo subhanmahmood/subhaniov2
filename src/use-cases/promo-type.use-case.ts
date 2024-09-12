@@ -9,6 +9,7 @@ export const createPromotionTypeUseCase = async (values: z.infer<typeof promotio
         name: values.name,
         price: values.price,
         active: values.active,
+        staticId: values.staticId,
     }
 
     await db.promotionType.create({ data: valuesToAdd })
@@ -20,6 +21,7 @@ export const updatePromotionTypeUseCase = async (values: z.infer<typeof promotio
         name: values.name,
         price: values.price,
         active: values.active,
+        staticId: values.staticId,
     }
 
     await db.promotionType.update({ where: { id: values.id }, data: valuesToUpdate })
@@ -30,8 +32,11 @@ export const getPromotionTypeUseCase = async (id: string) => {
     return promotionType;
 }
 
-export const getPromotionTypesUseCase = async () => {
-    const promotionTypes = await db.promotionType.findMany()
+export const getPromotionTypesUseCase = async (onlyShowActive = false) => {
+    const promotionTypes = await db.promotionType.findMany({
+        ...(onlyShowActive ? { where: { active: true } } : {}),
+        orderBy: { order: 'asc' }
+    })
     return promotionTypes;
 }
 

@@ -1,5 +1,5 @@
-import { auth } from '@/auth';
-import { UnauthorizedError } from '@/lib/exception';
+
+
 import { PageHeader } from '@/components/page-header';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -7,14 +7,11 @@ import { Edit, Plus } from 'lucide-react';
 import { getCategoriesWithLinksAction } from '@/server/actions/category.actions';
 import { redirect } from 'next/navigation';
 import LinkListItem from '@/components/link/link-item';
+import { auth } from '@/auth';
 
 export default async function EditCategory() {
 
     const session = await auth()
-
-    if (!session) {
-        throw new UnauthorizedError()
-    }
 
     const [categoriesWithLinks] = await getCategoriesWithLinksAction({});
 
@@ -24,7 +21,7 @@ export default async function EditCategory() {
 
     return <div>
         <div className="flex justify-between items-center">
-            <PageHeader title="Links" showBack={false} />
+            <PageHeader showBack={false} title="Links" />
             <div className="flex gap-2">
                 <Link href="/admin/links/add"><Button variant="outline" className="pl-2 pr-1 py-1 h-auto">Add<Plus className="ml-1 w-4 h-4" /></Button></Link>
             </div>

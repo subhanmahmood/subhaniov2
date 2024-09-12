@@ -18,7 +18,7 @@ export default async function AddLinks() {
         <div className="flex gap-2">
 
             <div className="flex grow flex-col gap-2">
-                <PageHeader title="Add Link" />
+                <PageHeader showBack={true} title="Add Link" />
 
                 <LinkForm categories={categories} />
             </div>

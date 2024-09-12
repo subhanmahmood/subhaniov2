@@ -53,11 +53,10 @@ export default function AdminSidebar() {
             ]
         },
         {
-            label: 'Discount Rules',
-            href: '/admin/discount-rules',
-            active: pathname === '/admin/discount-rules'
+            label: 'Leads',
+            href: '/admin/leads',
+            active: pathname === '/admin/leads'
         }
-
     ]
 
     return (
