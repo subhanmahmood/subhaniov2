@@ -35,8 +35,6 @@ export const addLinkClickAction = createServerAction().input(z.object({
     const { id } = input;
 
     await addLinkClickUseCase(id)
-
-    revalidatePath
 })
 
 export const getLinksAction = createServerAction().input(z.object({
