@@ -2,7 +2,6 @@
 
 import { FrownIcon } from 'lucide-react'
 import Link from 'next/link'
-import { useEffect } from 'react'
 
 export default function Error({
     error,
@@ -10,12 +9,6 @@ export default function Error({
     error: Error & { digest?: string }
     reset: () => void
 }) {
-    useEffect(() => {
-        // Log the error to an error reporting service
-        console.log(error)
-        console.log(error.name)
-        console.log(error.message)
-    }, [error])
 
     return (
         <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">

@@ -18,8 +18,6 @@ export default async function EditPromotionType({ params }: { params: { id: stri
         await updatePromotionTypeAction(values);
     };
 
-    console.log(promoType)
-
 
     return <div className="flex flex-col gap-4">
         <PageHeader showBack={true} title={`${isEditing ? 'Edit' : 'Save'} Promotion Type`} />

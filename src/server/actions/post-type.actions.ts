@@ -8,42 +8,72 @@ import { z } from "zod";
 
 export const createPostTypeAction = authenticatedAction.createServerAction().input(postTypeFormSchema).handler(async ({ input }) => {
     "use server";
-
-    await createPostTypeUseCase(input)
-
-    revalidatePath('/admin/post-types')
-})
+    try {
+        await createPostTypeUseCase(input);
+        revalidatePath('/admin/post-types');
+        return { success: true };
+    } catch (error) {
+        console.error('Error creating post type:', error);
+        return { success: false, error: 'Failed to create post type' };
+    }
+});
 
 export const updatePostTypeAction = authenticatedAction.createServerAction().input(postTypeFormSchema).handler(async ({ input }) => {
     "use server";
-
-    await updatePostTypeUseCase(input)
-
-    revalidatePath('/admin/post-types')
-})
+    try {
+        await updatePostTypeUseCase(input);
+        revalidatePath('/admin/post-types');
+        return { success: true };
+    } catch (error) {
+        console.error('Error updating post type:', error);
+        return { success: false, error: 'Failed to update post type' };
+    }
+});
 
 export const deletePostTypeAction = authenticatedAction.createServerAction().input(z.object({
     id: z.string()
 })).handler(async ({ input }) => {
-    await deletePostTypeUseCase(input.id)
-
-    revalidatePath('/admin/post-types')
-})
+    try {
+        await deletePostTypeUseCase(input.id);
+        revalidatePath('/admin/post-types');
+        return { success: true };
+    } catch (error) {
+        console.error('Error deleting post type:', error);
+        return { success: false, error: 'Failed to delete post type' };
+    }
+});
 
 export const getPostTypesAction = authenticatedAction.createServerAction().input(z.object({
     onlyShowActive: z.boolean().optional()
 })).output(z.array(postTypeFormSchema)).handler(async ({ input }) => {
-    return getPostTypesUseCase(input.onlyShowActive)
-})
+    try {
+        const postTypes = await getPostTypesUseCase(input.onlyShowActive);
+        return postTypes;
+    } catch (error) {
+        console.error('Error fetching post types:', error);
+        throw new Error('Failed to fetch post types');
+    }
+});
 
 export const getPostTypeAction = authenticatedAction.createServerAction().input(z.object({
     id: z.string()
 })).output(postTypeFormSchema.nullable()).handler(async ({ input }) => {
-    return getPostTypeUseCase(input.id)
-})
+    try {
+        const postType = await getPostTypeUseCase(input.id);
+        return postType;
+    } catch (error) {
+        console.error('Error fetching post type:', error);
+        throw new Error('Failed to fetch post type');
+    }
+});
 
 export const updatePostTypesAction = authenticatedAction.createServerAction().input(z.array(postTypeFormSchema)).handler(async ({ input }) => {
-    await updatePostTypesUseCase(input)
-
-    revalidatePath('/admin/post-types')
-})
+    try {
+        await updatePostTypesUseCase(input);
+        revalidatePath('/admin/post-types');
+        return { success: true };
+    } catch (error) {
+        console.error('Error updating post types:', error);
+        return { success: false, error: 'Failed to update post types' };
+    }
+});

@@ -5,10 +5,14 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowUpDown, Plus } from 'lucide-react';
 
+export const dynamic = 'force-dynamic'
+
 export default async function EditCategory() {
     const [postTypes, error] = await getPostTypesAction({});
-    console.log('postTypes', postTypes)
-    console.log('error', error)
+
+    if (error) {
+        throw new Error("Could not fetch post types")
+    }
 
     return <div>
         <div className="flex justify-between items-center">
