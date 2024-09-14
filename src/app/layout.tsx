@@ -5,6 +5,7 @@ import { GeistSans } from "geist/font/sans";
 import { Toaster } from "@/components/ui/sonner";
 import { auth } from "@/auth";
 import { SessionProvider } from "@/components/auth/session-provider";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata = {
   title: "subhan.io",
@@ -22,9 +23,15 @@ export default async function RootLayout({
     <html lang="en" className={`${GeistSans.variable}`}>
       <html lang="en">
         <body>
-          <SessionProvider session={session}>
-            {children}
-          </SessionProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange>
+            <SessionProvider session={session}>
+              {children}
+            </SessionProvider>
+          </ThemeProvider>
         </body>
       </html>
       <Toaster />

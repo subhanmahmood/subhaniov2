@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { SignOutButton } from "@/components/auth/auth-buttons";
 import LinkListItem from "@/components/link/link-item";
+import { ThemeToggle } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
 import { getCategoriesWithLinksAction } from "@/server/actions/category.actions";
 import { Edit, Plus } from "lucide-react";
@@ -20,10 +21,15 @@ export default async function Links() {
     return <>
         <div className="flex justify-between items-center">
             <h1 className="text-lg font-semibold">Hi, I&apos;m Subhan</h1>
-            {session && <div className="flex gap-2 items-center">
-                <Link prefetch={true} href="/admin/links"><Button variant={'outline'}>Admin</Button></Link>
-                <SignOutButton />
-            </div>}
+            <div className="flex gap-2 items-center">
+                <ThemeToggle />
+                {session &&
+                    <>
+                        <Link prefetch={true} href="/admin/links"><Button variant={'outline'}>Admin</Button></Link>
+                        <SignOutButton />
+                    </>
+                }
+            </div>
         </div>
         <h1 className="text-md text-slate-600">I make videos on the internet sometimes and build projects sometimes. You&apos;re probably looking for something you saw in one of my videos or on my website. Hopefully you find it below.</h1>
         {session &&
