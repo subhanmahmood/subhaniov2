@@ -22,7 +22,7 @@ export default async function Links() {
         <div className="flex justify-between items-center">
             <h1 className="text-lg font-semibold">Hi, I&apos;m Subhan</h1>
             <div className="flex gap-2 items-center">
-                <ThemeToggle />
+                {/* <ThemeToggle /> */}
                 {session &&
                     <>
                         <Link prefetch={true} href="/admin/links"><Button variant={'outline'}>Admin</Button></Link>

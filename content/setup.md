@@ -2,6 +2,8 @@
 
 I've added links to pretty much everything I actually use below. I've also added a few notes on why I chose them. If you can't find a link, please let me know! [(IG)](https://instagram.com/subhan.io)
 
+P.S. None of these links are affiliate links :)
+
 ## Desk Setup
 
 - Desk: [FlexiSpot E7 Pro](https://www.amazon.co.uk/s?k=FlexiSpot+E7+Pro)
