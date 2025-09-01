@@ -24,7 +24,7 @@ export const AuthenticatorScalarFieldEnumSchema = z.enum(['credentialID','userId
 
 export const CategoryScalarFieldEnumSchema = z.enum(['id','name','order']);
 
-export const LinkScalarFieldEnumSchema = z.enum(['id','name','url','categoryId','order']);
+export const LinkScalarFieldEnumSchema = z.enum(['id','name','url','instagramUrl','tiktokUrl','categoryId','order']);
 
 export const LinkClickScalarFieldEnumSchema = z.enum(['id','linkId','datetime']);
 
@@ -33,6 +33,8 @@ export const PostTypeScalarFieldEnumSchema = z.enum(['id','name','staticId','pri
 export const PromotionTypeScalarFieldEnumSchema = z.enum(['id','name','staticId','price','active','order']);
 
 export const LeadScalarFieldEnumSchema = z.enum(['id','email','name','companyName','projectDescription','createdAt','updatedAt']);
+
+export const CollabQuoteScalarFieldEnumSchema = z.enum(['id','leadId','createdAt','updatedAt']);
 
 export const SortOrderSchema = z.enum(['asc','desc']);
 
@@ -144,6 +146,8 @@ export const LinkSchema = z.object({
   id: z.string().uuid(),
   name: z.string(),
   url: z.string(),
+  instagramUrl: z.string().nullable(),
+  tiktokUrl: z.string().nullable(),
   categoryId: z.string(),
   order: z.number().int(),
 })
@@ -207,6 +211,19 @@ export const LeadSchema = z.object({
 })
 
 export type Lead = z.infer<typeof LeadSchema>
+
+/////////////////////////////////////////
+// COLLAB QUOTE SCHEMA
+/////////////////////////////////////////
+
+export const CollabQuoteSchema = z.object({
+  id: z.string().cuid(),
+  leadId: z.string(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+})
+
+export type CollabQuote = z.infer<typeof CollabQuoteSchema>
 
 /////////////////////////////////////////
 // SELECT & INCLUDE
@@ -389,6 +406,8 @@ export const LinkSelectSchema: z.ZodType<Prisma.LinkSelect> = z.object({
   id: z.boolean().optional(),
   name: z.boolean().optional(),
   url: z.boolean().optional(),
+  instagramUrl: z.boolean().optional(),
+  tiktokUrl: z.boolean().optional(),
   categoryId: z.boolean().optional(),
   order: z.boolean().optional(),
   category: z.union([z.boolean(),z.lazy(() => CategoryArgsSchema)]).optional(),
@@ -442,6 +461,24 @@ export const PromotionTypeSelectSchema: z.ZodType<Prisma.PromotionTypeSelect> = 
 // LEAD
 //------------------------------------------------------
 
+export const LeadIncludeSchema: z.ZodType<Prisma.LeadInclude> = z.object({
+  CollabQuote: z.union([z.boolean(),z.lazy(() => CollabQuoteFindManyArgsSchema)]).optional(),
+  _count: z.union([z.boolean(),z.lazy(() => LeadCountOutputTypeArgsSchema)]).optional(),
+}).strict()
+
+export const LeadArgsSchema: z.ZodType<Prisma.LeadDefaultArgs> = z.object({
+  select: z.lazy(() => LeadSelectSchema).optional(),
+  include: z.lazy(() => LeadIncludeSchema).optional(),
+}).strict();
+
+export const LeadCountOutputTypeArgsSchema: z.ZodType<Prisma.LeadCountOutputTypeDefaultArgs> = z.object({
+  select: z.lazy(() => LeadCountOutputTypeSelectSchema).nullish(),
+}).strict();
+
+export const LeadCountOutputTypeSelectSchema: z.ZodType<Prisma.LeadCountOutputTypeSelect> = z.object({
+  CollabQuote: z.boolean().optional(),
+}).strict();
+
 export const LeadSelectSchema: z.ZodType<Prisma.LeadSelect> = z.object({
   id: z.boolean().optional(),
   email: z.boolean().optional(),
@@ -450,6 +487,28 @@ export const LeadSelectSchema: z.ZodType<Prisma.LeadSelect> = z.object({
   projectDescription: z.boolean().optional(),
   createdAt: z.boolean().optional(),
   updatedAt: z.boolean().optional(),
+  CollabQuote: z.union([z.boolean(),z.lazy(() => CollabQuoteFindManyArgsSchema)]).optional(),
+  _count: z.union([z.boolean(),z.lazy(() => LeadCountOutputTypeArgsSchema)]).optional(),
+}).strict()
+
+// COLLAB QUOTE
+//------------------------------------------------------
+
+export const CollabQuoteIncludeSchema: z.ZodType<Prisma.CollabQuoteInclude> = z.object({
+  lead: z.union([z.boolean(),z.lazy(() => LeadArgsSchema)]).optional(),
+}).strict()
+
+export const CollabQuoteArgsSchema: z.ZodType<Prisma.CollabQuoteDefaultArgs> = z.object({
+  select: z.lazy(() => CollabQuoteSelectSchema).optional(),
+  include: z.lazy(() => CollabQuoteIncludeSchema).optional(),
+}).strict();
+
+export const CollabQuoteSelectSchema: z.ZodType<Prisma.CollabQuoteSelect> = z.object({
+  id: z.boolean().optional(),
+  leadId: z.boolean().optional(),
+  createdAt: z.boolean().optional(),
+  updatedAt: z.boolean().optional(),
+  lead: z.union([z.boolean(),z.lazy(() => LeadArgsSchema)]).optional(),
 }).strict()
 
 
@@ -896,6 +955,8 @@ export const LinkWhereInputSchema: z.ZodType<Prisma.LinkWhereInput> = z.object({
   id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   url: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  instagramUrl: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  tiktokUrl: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   categoryId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   order: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   category: z.union([ z.lazy(() => CategoryRelationFilterSchema),z.lazy(() => CategoryWhereInputSchema) ]).optional(),
@@ -906,6 +967,8 @@ export const LinkOrderByWithRelationInputSchema: z.ZodType<Prisma.LinkOrderByWit
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   url: z.lazy(() => SortOrderSchema).optional(),
+  instagramUrl: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  tiktokUrl: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   categoryId: z.lazy(() => SortOrderSchema).optional(),
   order: z.lazy(() => SortOrderSchema).optional(),
   category: z.lazy(() => CategoryOrderByWithRelationInputSchema).optional(),
@@ -922,6 +985,8 @@ export const LinkWhereUniqueInputSchema: z.ZodType<Prisma.LinkWhereUniqueInput> 
   NOT: z.union([ z.lazy(() => LinkWhereInputSchema),z.lazy(() => LinkWhereInputSchema).array() ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   url: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  instagramUrl: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  tiktokUrl: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   categoryId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   order: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   category: z.union([ z.lazy(() => CategoryRelationFilterSchema),z.lazy(() => CategoryWhereInputSchema) ]).optional(),
@@ -932,6 +997,8 @@ export const LinkOrderByWithAggregationInputSchema: z.ZodType<Prisma.LinkOrderBy
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   url: z.lazy(() => SortOrderSchema).optional(),
+  instagramUrl: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  tiktokUrl: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   categoryId: z.lazy(() => SortOrderSchema).optional(),
   order: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => LinkCountOrderByAggregateInputSchema).optional(),
@@ -948,6 +1015,8 @@ export const LinkScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.LinkScal
   id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   url: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  instagramUrl: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
+  tiktokUrl: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   categoryId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   order: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
 }).strict();
@@ -1153,6 +1222,7 @@ export const LeadWhereInputSchema: z.ZodType<Prisma.LeadWhereInput> = z.object({
   projectDescription: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  CollabQuote: z.lazy(() => CollabQuoteListRelationFilterSchema).optional()
 }).strict();
 
 export const LeadOrderByWithRelationInputSchema: z.ZodType<Prisma.LeadOrderByWithRelationInput> = z.object({
@@ -1162,7 +1232,8 @@ export const LeadOrderByWithRelationInputSchema: z.ZodType<Prisma.LeadOrderByWit
   companyName: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   projectDescription: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
-  updatedAt: z.lazy(() => SortOrderSchema).optional()
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  CollabQuote: z.lazy(() => CollabQuoteOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
 export const LeadWhereUniqueInputSchema: z.ZodType<Prisma.LeadWhereUniqueInput> = z.object({
@@ -1179,6 +1250,7 @@ export const LeadWhereUniqueInputSchema: z.ZodType<Prisma.LeadWhereUniqueInput> 
   projectDescription: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  CollabQuote: z.lazy(() => CollabQuoteListRelationFilterSchema).optional()
 }).strict());
 
 export const LeadOrderByWithAggregationInputSchema: z.ZodType<Prisma.LeadOrderByWithAggregationInput> = z.object({
@@ -1203,6 +1275,59 @@ export const LeadScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.LeadScal
   name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   companyName: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   projectDescription: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
+}).strict();
+
+export const CollabQuoteWhereInputSchema: z.ZodType<Prisma.CollabQuoteWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => CollabQuoteWhereInputSchema),z.lazy(() => CollabQuoteWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => CollabQuoteWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => CollabQuoteWhereInputSchema),z.lazy(() => CollabQuoteWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  leadId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  lead: z.union([ z.lazy(() => LeadRelationFilterSchema),z.lazy(() => LeadWhereInputSchema) ]).optional(),
+}).strict();
+
+export const CollabQuoteOrderByWithRelationInputSchema: z.ZodType<Prisma.CollabQuoteOrderByWithRelationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  leadId: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  lead: z.lazy(() => LeadOrderByWithRelationInputSchema).optional()
+}).strict();
+
+export const CollabQuoteWhereUniqueInputSchema: z.ZodType<Prisma.CollabQuoteWhereUniqueInput> = z.object({
+  id: z.string().cuid()
+})
+.and(z.object({
+  id: z.string().cuid().optional(),
+  AND: z.union([ z.lazy(() => CollabQuoteWhereInputSchema),z.lazy(() => CollabQuoteWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => CollabQuoteWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => CollabQuoteWhereInputSchema),z.lazy(() => CollabQuoteWhereInputSchema).array() ]).optional(),
+  leadId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  lead: z.union([ z.lazy(() => LeadRelationFilterSchema),z.lazy(() => LeadWhereInputSchema) ]).optional(),
+}).strict());
+
+export const CollabQuoteOrderByWithAggregationInputSchema: z.ZodType<Prisma.CollabQuoteOrderByWithAggregationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  leadId: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => CollabQuoteCountOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => CollabQuoteMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => CollabQuoteMinOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const CollabQuoteScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.CollabQuoteScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => CollabQuoteScalarWhereWithAggregatesInputSchema),z.lazy(() => CollabQuoteScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => CollabQuoteScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => CollabQuoteScalarWhereWithAggregatesInputSchema),z.lazy(() => CollabQuoteScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  leadId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
 }).strict();
@@ -1623,6 +1748,8 @@ export const LinkCreateInputSchema: z.ZodType<Prisma.LinkCreateInput> = z.object
   id: z.string().uuid().optional(),
   name: z.string(),
   url: z.string(),
+  instagramUrl: z.string().optional().nullable(),
+  tiktokUrl: z.string().optional().nullable(),
   order: z.number().int().optional(),
   category: z.lazy(() => CategoryCreateNestedOneWithoutLinksInputSchema),
   clicks: z.lazy(() => LinkClickCreateNestedManyWithoutLinkInputSchema).optional()
@@ -1632,6 +1759,8 @@ export const LinkUncheckedCreateInputSchema: z.ZodType<Prisma.LinkUncheckedCreat
   id: z.string().uuid().optional(),
   name: z.string(),
   url: z.string(),
+  instagramUrl: z.string().optional().nullable(),
+  tiktokUrl: z.string().optional().nullable(),
   categoryId: z.string(),
   order: z.number().int().optional(),
   clicks: z.lazy(() => LinkClickUncheckedCreateNestedManyWithoutLinkInputSchema).optional()
@@ -1641,6 +1770,8 @@ export const LinkUpdateInputSchema: z.ZodType<Prisma.LinkUpdateInput> = z.object
   id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  instagramUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  tiktokUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   order: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   category: z.lazy(() => CategoryUpdateOneRequiredWithoutLinksNestedInputSchema).optional(),
   clicks: z.lazy(() => LinkClickUpdateManyWithoutLinkNestedInputSchema).optional()
@@ -1650,6 +1781,8 @@ export const LinkUncheckedUpdateInputSchema: z.ZodType<Prisma.LinkUncheckedUpdat
   id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  instagramUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  tiktokUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   categoryId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   order: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   clicks: z.lazy(() => LinkClickUncheckedUpdateManyWithoutLinkNestedInputSchema).optional()
@@ -1659,6 +1792,8 @@ export const LinkCreateManyInputSchema: z.ZodType<Prisma.LinkCreateManyInput> = 
   id: z.string().uuid().optional(),
   name: z.string(),
   url: z.string(),
+  instagramUrl: z.string().optional().nullable(),
+  tiktokUrl: z.string().optional().nullable(),
   categoryId: z.string(),
   order: z.number().int().optional()
 }).strict();
@@ -1667,6 +1802,8 @@ export const LinkUpdateManyMutationInputSchema: z.ZodType<Prisma.LinkUpdateManyM
   id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  instagramUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  tiktokUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   order: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
@@ -1674,6 +1811,8 @@ export const LinkUncheckedUpdateManyInputSchema: z.ZodType<Prisma.LinkUncheckedU
   id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  instagramUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  tiktokUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   categoryId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   order: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -1852,7 +1991,8 @@ export const LeadCreateInputSchema: z.ZodType<Prisma.LeadCreateInput> = z.object
   companyName: z.string().optional().nullable(),
   projectDescription: z.string(),
   createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
+  updatedAt: z.coerce.date().optional(),
+  CollabQuote: z.lazy(() => CollabQuoteCreateNestedManyWithoutLeadInputSchema).optional()
 }).strict();
 
 export const LeadUncheckedCreateInputSchema: z.ZodType<Prisma.LeadUncheckedCreateInput> = z.object({
@@ -1862,7 +2002,8 @@ export const LeadUncheckedCreateInputSchema: z.ZodType<Prisma.LeadUncheckedCreat
   companyName: z.string().optional().nullable(),
   projectDescription: z.string(),
   createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
+  updatedAt: z.coerce.date().optional(),
+  CollabQuote: z.lazy(() => CollabQuoteUncheckedCreateNestedManyWithoutLeadInputSchema).optional()
 }).strict();
 
 export const LeadUpdateInputSchema: z.ZodType<Prisma.LeadUpdateInput> = z.object({
@@ -1873,6 +2014,7 @@ export const LeadUpdateInputSchema: z.ZodType<Prisma.LeadUpdateInput> = z.object
   projectDescription: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  CollabQuote: z.lazy(() => CollabQuoteUpdateManyWithoutLeadNestedInputSchema).optional()
 }).strict();
 
 export const LeadUncheckedUpdateInputSchema: z.ZodType<Prisma.LeadUncheckedUpdateInput> = z.object({
@@ -1883,6 +2025,7 @@ export const LeadUncheckedUpdateInputSchema: z.ZodType<Prisma.LeadUncheckedUpdat
   projectDescription: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  CollabQuote: z.lazy(() => CollabQuoteUncheckedUpdateManyWithoutLeadNestedInputSchema).optional()
 }).strict();
 
 export const LeadCreateManyInputSchema: z.ZodType<Prisma.LeadCreateManyInput> = z.object({
@@ -1911,6 +2054,54 @@ export const LeadUncheckedUpdateManyInputSchema: z.ZodType<Prisma.LeadUncheckedU
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   companyName: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   projectDescription: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const CollabQuoteCreateInputSchema: z.ZodType<Prisma.CollabQuoteCreateInput> = z.object({
+  id: z.string().cuid().optional(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  lead: z.lazy(() => LeadCreateNestedOneWithoutCollabQuoteInputSchema)
+}).strict();
+
+export const CollabQuoteUncheckedCreateInputSchema: z.ZodType<Prisma.CollabQuoteUncheckedCreateInput> = z.object({
+  id: z.string().cuid().optional(),
+  leadId: z.string(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional()
+}).strict();
+
+export const CollabQuoteUpdateInputSchema: z.ZodType<Prisma.CollabQuoteUpdateInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  lead: z.lazy(() => LeadUpdateOneRequiredWithoutCollabQuoteNestedInputSchema).optional()
+}).strict();
+
+export const CollabQuoteUncheckedUpdateInputSchema: z.ZodType<Prisma.CollabQuoteUncheckedUpdateInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  leadId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const CollabQuoteCreateManyInputSchema: z.ZodType<Prisma.CollabQuoteCreateManyInput> = z.object({
+  id: z.string().cuid().optional(),
+  leadId: z.string(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional()
+}).strict();
+
+export const CollabQuoteUpdateManyMutationInputSchema: z.ZodType<Prisma.CollabQuoteUpdateManyMutationInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const CollabQuoteUncheckedUpdateManyInputSchema: z.ZodType<Prisma.CollabQuoteUncheckedUpdateManyInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  leadId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -2377,6 +2568,8 @@ export const LinkCountOrderByAggregateInputSchema: z.ZodType<Prisma.LinkCountOrd
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   url: z.lazy(() => SortOrderSchema).optional(),
+  instagramUrl: z.lazy(() => SortOrderSchema).optional(),
+  tiktokUrl: z.lazy(() => SortOrderSchema).optional(),
   categoryId: z.lazy(() => SortOrderSchema).optional(),
   order: z.lazy(() => SortOrderSchema).optional()
 }).strict();
@@ -2389,6 +2582,8 @@ export const LinkMaxOrderByAggregateInputSchema: z.ZodType<Prisma.LinkMaxOrderBy
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   url: z.lazy(() => SortOrderSchema).optional(),
+  instagramUrl: z.lazy(() => SortOrderSchema).optional(),
+  tiktokUrl: z.lazy(() => SortOrderSchema).optional(),
   categoryId: z.lazy(() => SortOrderSchema).optional(),
   order: z.lazy(() => SortOrderSchema).optional()
 }).strict();
@@ -2397,6 +2592,8 @@ export const LinkMinOrderByAggregateInputSchema: z.ZodType<Prisma.LinkMinOrderBy
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   url: z.lazy(() => SortOrderSchema).optional(),
+  instagramUrl: z.lazy(() => SortOrderSchema).optional(),
+  tiktokUrl: z.lazy(() => SortOrderSchema).optional(),
   categoryId: z.lazy(() => SortOrderSchema).optional(),
   order: z.lazy(() => SortOrderSchema).optional()
 }).strict();
@@ -2529,6 +2726,16 @@ export const PromotionTypeSumOrderByAggregateInputSchema: z.ZodType<Prisma.Promo
   order: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
+export const CollabQuoteListRelationFilterSchema: z.ZodType<Prisma.CollabQuoteListRelationFilter> = z.object({
+  every: z.lazy(() => CollabQuoteWhereInputSchema).optional(),
+  some: z.lazy(() => CollabQuoteWhereInputSchema).optional(),
+  none: z.lazy(() => CollabQuoteWhereInputSchema).optional()
+}).strict();
+
+export const CollabQuoteOrderByRelationAggregateInputSchema: z.ZodType<Prisma.CollabQuoteOrderByRelationAggregateInput> = z.object({
+  _count: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
 export const LeadCountOrderByAggregateInputSchema: z.ZodType<Prisma.LeadCountOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   email: z.lazy(() => SortOrderSchema).optional(),
@@ -2555,6 +2762,32 @@ export const LeadMinOrderByAggregateInputSchema: z.ZodType<Prisma.LeadMinOrderBy
   name: z.lazy(() => SortOrderSchema).optional(),
   companyName: z.lazy(() => SortOrderSchema).optional(),
   projectDescription: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const LeadRelationFilterSchema: z.ZodType<Prisma.LeadRelationFilter> = z.object({
+  is: z.lazy(() => LeadWhereInputSchema).optional(),
+  isNot: z.lazy(() => LeadWhereInputSchema).optional()
+}).strict();
+
+export const CollabQuoteCountOrderByAggregateInputSchema: z.ZodType<Prisma.CollabQuoteCountOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  leadId: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const CollabQuoteMaxOrderByAggregateInputSchema: z.ZodType<Prisma.CollabQuoteMaxOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  leadId: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const CollabQuoteMinOrderByAggregateInputSchema: z.ZodType<Prisma.CollabQuoteMinOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  leadId: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional()
 }).strict();
@@ -2881,6 +3114,62 @@ export const FloatFieldUpdateOperationsInputSchema: z.ZodType<Prisma.FloatFieldU
   decrement: z.number().optional(),
   multiply: z.number().optional(),
   divide: z.number().optional()
+}).strict();
+
+export const CollabQuoteCreateNestedManyWithoutLeadInputSchema: z.ZodType<Prisma.CollabQuoteCreateNestedManyWithoutLeadInput> = z.object({
+  create: z.union([ z.lazy(() => CollabQuoteCreateWithoutLeadInputSchema),z.lazy(() => CollabQuoteCreateWithoutLeadInputSchema).array(),z.lazy(() => CollabQuoteUncheckedCreateWithoutLeadInputSchema),z.lazy(() => CollabQuoteUncheckedCreateWithoutLeadInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => CollabQuoteCreateOrConnectWithoutLeadInputSchema),z.lazy(() => CollabQuoteCreateOrConnectWithoutLeadInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => CollabQuoteCreateManyLeadInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => CollabQuoteWhereUniqueInputSchema),z.lazy(() => CollabQuoteWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
+export const CollabQuoteUncheckedCreateNestedManyWithoutLeadInputSchema: z.ZodType<Prisma.CollabQuoteUncheckedCreateNestedManyWithoutLeadInput> = z.object({
+  create: z.union([ z.lazy(() => CollabQuoteCreateWithoutLeadInputSchema),z.lazy(() => CollabQuoteCreateWithoutLeadInputSchema).array(),z.lazy(() => CollabQuoteUncheckedCreateWithoutLeadInputSchema),z.lazy(() => CollabQuoteUncheckedCreateWithoutLeadInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => CollabQuoteCreateOrConnectWithoutLeadInputSchema),z.lazy(() => CollabQuoteCreateOrConnectWithoutLeadInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => CollabQuoteCreateManyLeadInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => CollabQuoteWhereUniqueInputSchema),z.lazy(() => CollabQuoteWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
+export const CollabQuoteUpdateManyWithoutLeadNestedInputSchema: z.ZodType<Prisma.CollabQuoteUpdateManyWithoutLeadNestedInput> = z.object({
+  create: z.union([ z.lazy(() => CollabQuoteCreateWithoutLeadInputSchema),z.lazy(() => CollabQuoteCreateWithoutLeadInputSchema).array(),z.lazy(() => CollabQuoteUncheckedCreateWithoutLeadInputSchema),z.lazy(() => CollabQuoteUncheckedCreateWithoutLeadInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => CollabQuoteCreateOrConnectWithoutLeadInputSchema),z.lazy(() => CollabQuoteCreateOrConnectWithoutLeadInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => CollabQuoteUpsertWithWhereUniqueWithoutLeadInputSchema),z.lazy(() => CollabQuoteUpsertWithWhereUniqueWithoutLeadInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => CollabQuoteCreateManyLeadInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => CollabQuoteWhereUniqueInputSchema),z.lazy(() => CollabQuoteWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => CollabQuoteWhereUniqueInputSchema),z.lazy(() => CollabQuoteWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => CollabQuoteWhereUniqueInputSchema),z.lazy(() => CollabQuoteWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => CollabQuoteWhereUniqueInputSchema),z.lazy(() => CollabQuoteWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => CollabQuoteUpdateWithWhereUniqueWithoutLeadInputSchema),z.lazy(() => CollabQuoteUpdateWithWhereUniqueWithoutLeadInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => CollabQuoteUpdateManyWithWhereWithoutLeadInputSchema),z.lazy(() => CollabQuoteUpdateManyWithWhereWithoutLeadInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => CollabQuoteScalarWhereInputSchema),z.lazy(() => CollabQuoteScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const CollabQuoteUncheckedUpdateManyWithoutLeadNestedInputSchema: z.ZodType<Prisma.CollabQuoteUncheckedUpdateManyWithoutLeadNestedInput> = z.object({
+  create: z.union([ z.lazy(() => CollabQuoteCreateWithoutLeadInputSchema),z.lazy(() => CollabQuoteCreateWithoutLeadInputSchema).array(),z.lazy(() => CollabQuoteUncheckedCreateWithoutLeadInputSchema),z.lazy(() => CollabQuoteUncheckedCreateWithoutLeadInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => CollabQuoteCreateOrConnectWithoutLeadInputSchema),z.lazy(() => CollabQuoteCreateOrConnectWithoutLeadInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => CollabQuoteUpsertWithWhereUniqueWithoutLeadInputSchema),z.lazy(() => CollabQuoteUpsertWithWhereUniqueWithoutLeadInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => CollabQuoteCreateManyLeadInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => CollabQuoteWhereUniqueInputSchema),z.lazy(() => CollabQuoteWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => CollabQuoteWhereUniqueInputSchema),z.lazy(() => CollabQuoteWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => CollabQuoteWhereUniqueInputSchema),z.lazy(() => CollabQuoteWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => CollabQuoteWhereUniqueInputSchema),z.lazy(() => CollabQuoteWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => CollabQuoteUpdateWithWhereUniqueWithoutLeadInputSchema),z.lazy(() => CollabQuoteUpdateWithWhereUniqueWithoutLeadInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => CollabQuoteUpdateManyWithWhereWithoutLeadInputSchema),z.lazy(() => CollabQuoteUpdateManyWithWhereWithoutLeadInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => CollabQuoteScalarWhereInputSchema),z.lazy(() => CollabQuoteScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const LeadCreateNestedOneWithoutCollabQuoteInputSchema: z.ZodType<Prisma.LeadCreateNestedOneWithoutCollabQuoteInput> = z.object({
+  create: z.union([ z.lazy(() => LeadCreateWithoutCollabQuoteInputSchema),z.lazy(() => LeadUncheckedCreateWithoutCollabQuoteInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => LeadCreateOrConnectWithoutCollabQuoteInputSchema).optional(),
+  connect: z.lazy(() => LeadWhereUniqueInputSchema).optional()
+}).strict();
+
+export const LeadUpdateOneRequiredWithoutCollabQuoteNestedInputSchema: z.ZodType<Prisma.LeadUpdateOneRequiredWithoutCollabQuoteNestedInput> = z.object({
+  create: z.union([ z.lazy(() => LeadCreateWithoutCollabQuoteInputSchema),z.lazy(() => LeadUncheckedCreateWithoutCollabQuoteInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => LeadCreateOrConnectWithoutCollabQuoteInputSchema).optional(),
+  upsert: z.lazy(() => LeadUpsertWithoutCollabQuoteInputSchema).optional(),
+  connect: z.lazy(() => LeadWhereUniqueInputSchema).optional(),
+  update: z.union([ z.lazy(() => LeadUpdateToOneWithWhereWithoutCollabQuoteInputSchema),z.lazy(() => LeadUpdateWithoutCollabQuoteInputSchema),z.lazy(() => LeadUncheckedUpdateWithoutCollabQuoteInputSchema) ]).optional(),
 }).strict();
 
 export const NestedStringFilterSchema: z.ZodType<Prisma.NestedStringFilter> = z.object({
@@ -3482,6 +3771,8 @@ export const LinkCreateWithoutCategoryInputSchema: z.ZodType<Prisma.LinkCreateWi
   id: z.string().uuid().optional(),
   name: z.string(),
   url: z.string(),
+  instagramUrl: z.string().optional().nullable(),
+  tiktokUrl: z.string().optional().nullable(),
   order: z.number().int().optional(),
   clicks: z.lazy(() => LinkClickCreateNestedManyWithoutLinkInputSchema).optional()
 }).strict();
@@ -3490,6 +3781,8 @@ export const LinkUncheckedCreateWithoutCategoryInputSchema: z.ZodType<Prisma.Lin
   id: z.string().uuid().optional(),
   name: z.string(),
   url: z.string(),
+  instagramUrl: z.string().optional().nullable(),
+  tiktokUrl: z.string().optional().nullable(),
   order: z.number().int().optional(),
   clicks: z.lazy(() => LinkClickUncheckedCreateNestedManyWithoutLinkInputSchema).optional()
 }).strict();
@@ -3527,6 +3820,8 @@ export const LinkScalarWhereInputSchema: z.ZodType<Prisma.LinkScalarWhereInput> 
   id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   url: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  instagramUrl: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  tiktokUrl: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   categoryId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   order: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
 }).strict();
@@ -3620,6 +3915,8 @@ export const LinkCreateWithoutClicksInputSchema: z.ZodType<Prisma.LinkCreateWith
   id: z.string().uuid().optional(),
   name: z.string(),
   url: z.string(),
+  instagramUrl: z.string().optional().nullable(),
+  tiktokUrl: z.string().optional().nullable(),
   order: z.number().int().optional(),
   category: z.lazy(() => CategoryCreateNestedOneWithoutLinksInputSchema)
 }).strict();
@@ -3628,6 +3925,8 @@ export const LinkUncheckedCreateWithoutClicksInputSchema: z.ZodType<Prisma.LinkU
   id: z.string().uuid().optional(),
   name: z.string(),
   url: z.string(),
+  instagramUrl: z.string().optional().nullable(),
+  tiktokUrl: z.string().optional().nullable(),
   categoryId: z.string(),
   order: z.number().int().optional()
 }).strict();
@@ -3652,6 +3951,8 @@ export const LinkUpdateWithoutClicksInputSchema: z.ZodType<Prisma.LinkUpdateWith
   id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  instagramUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  tiktokUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   order: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   category: z.lazy(() => CategoryUpdateOneRequiredWithoutLinksNestedInputSchema).optional()
 }).strict();
@@ -3660,8 +3961,114 @@ export const LinkUncheckedUpdateWithoutClicksInputSchema: z.ZodType<Prisma.LinkU
   id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  instagramUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  tiktokUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   categoryId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   order: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const CollabQuoteCreateWithoutLeadInputSchema: z.ZodType<Prisma.CollabQuoteCreateWithoutLeadInput> = z.object({
+  id: z.string().cuid().optional(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional()
+}).strict();
+
+export const CollabQuoteUncheckedCreateWithoutLeadInputSchema: z.ZodType<Prisma.CollabQuoteUncheckedCreateWithoutLeadInput> = z.object({
+  id: z.string().cuid().optional(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional()
+}).strict();
+
+export const CollabQuoteCreateOrConnectWithoutLeadInputSchema: z.ZodType<Prisma.CollabQuoteCreateOrConnectWithoutLeadInput> = z.object({
+  where: z.lazy(() => CollabQuoteWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => CollabQuoteCreateWithoutLeadInputSchema),z.lazy(() => CollabQuoteUncheckedCreateWithoutLeadInputSchema) ]),
+}).strict();
+
+export const CollabQuoteCreateManyLeadInputEnvelopeSchema: z.ZodType<Prisma.CollabQuoteCreateManyLeadInputEnvelope> = z.object({
+  data: z.union([ z.lazy(() => CollabQuoteCreateManyLeadInputSchema),z.lazy(() => CollabQuoteCreateManyLeadInputSchema).array() ]),
+  skipDuplicates: z.boolean().optional()
+}).strict();
+
+export const CollabQuoteUpsertWithWhereUniqueWithoutLeadInputSchema: z.ZodType<Prisma.CollabQuoteUpsertWithWhereUniqueWithoutLeadInput> = z.object({
+  where: z.lazy(() => CollabQuoteWhereUniqueInputSchema),
+  update: z.union([ z.lazy(() => CollabQuoteUpdateWithoutLeadInputSchema),z.lazy(() => CollabQuoteUncheckedUpdateWithoutLeadInputSchema) ]),
+  create: z.union([ z.lazy(() => CollabQuoteCreateWithoutLeadInputSchema),z.lazy(() => CollabQuoteUncheckedCreateWithoutLeadInputSchema) ]),
+}).strict();
+
+export const CollabQuoteUpdateWithWhereUniqueWithoutLeadInputSchema: z.ZodType<Prisma.CollabQuoteUpdateWithWhereUniqueWithoutLeadInput> = z.object({
+  where: z.lazy(() => CollabQuoteWhereUniqueInputSchema),
+  data: z.union([ z.lazy(() => CollabQuoteUpdateWithoutLeadInputSchema),z.lazy(() => CollabQuoteUncheckedUpdateWithoutLeadInputSchema) ]),
+}).strict();
+
+export const CollabQuoteUpdateManyWithWhereWithoutLeadInputSchema: z.ZodType<Prisma.CollabQuoteUpdateManyWithWhereWithoutLeadInput> = z.object({
+  where: z.lazy(() => CollabQuoteScalarWhereInputSchema),
+  data: z.union([ z.lazy(() => CollabQuoteUpdateManyMutationInputSchema),z.lazy(() => CollabQuoteUncheckedUpdateManyWithoutLeadInputSchema) ]),
+}).strict();
+
+export const CollabQuoteScalarWhereInputSchema: z.ZodType<Prisma.CollabQuoteScalarWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => CollabQuoteScalarWhereInputSchema),z.lazy(() => CollabQuoteScalarWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => CollabQuoteScalarWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => CollabQuoteScalarWhereInputSchema),z.lazy(() => CollabQuoteScalarWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  leadId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+}).strict();
+
+export const LeadCreateWithoutCollabQuoteInputSchema: z.ZodType<Prisma.LeadCreateWithoutCollabQuoteInput> = z.object({
+  id: z.string().cuid().optional(),
+  email: z.string(),
+  name: z.string(),
+  companyName: z.string().optional().nullable(),
+  projectDescription: z.string(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional()
+}).strict();
+
+export const LeadUncheckedCreateWithoutCollabQuoteInputSchema: z.ZodType<Prisma.LeadUncheckedCreateWithoutCollabQuoteInput> = z.object({
+  id: z.string().cuid().optional(),
+  email: z.string(),
+  name: z.string(),
+  companyName: z.string().optional().nullable(),
+  projectDescription: z.string(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional()
+}).strict();
+
+export const LeadCreateOrConnectWithoutCollabQuoteInputSchema: z.ZodType<Prisma.LeadCreateOrConnectWithoutCollabQuoteInput> = z.object({
+  where: z.lazy(() => LeadWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => LeadCreateWithoutCollabQuoteInputSchema),z.lazy(() => LeadUncheckedCreateWithoutCollabQuoteInputSchema) ]),
+}).strict();
+
+export const LeadUpsertWithoutCollabQuoteInputSchema: z.ZodType<Prisma.LeadUpsertWithoutCollabQuoteInput> = z.object({
+  update: z.union([ z.lazy(() => LeadUpdateWithoutCollabQuoteInputSchema),z.lazy(() => LeadUncheckedUpdateWithoutCollabQuoteInputSchema) ]),
+  create: z.union([ z.lazy(() => LeadCreateWithoutCollabQuoteInputSchema),z.lazy(() => LeadUncheckedCreateWithoutCollabQuoteInputSchema) ]),
+  where: z.lazy(() => LeadWhereInputSchema).optional()
+}).strict();
+
+export const LeadUpdateToOneWithWhereWithoutCollabQuoteInputSchema: z.ZodType<Prisma.LeadUpdateToOneWithWhereWithoutCollabQuoteInput> = z.object({
+  where: z.lazy(() => LeadWhereInputSchema).optional(),
+  data: z.union([ z.lazy(() => LeadUpdateWithoutCollabQuoteInputSchema),z.lazy(() => LeadUncheckedUpdateWithoutCollabQuoteInputSchema) ]),
+}).strict();
+
+export const LeadUpdateWithoutCollabQuoteInputSchema: z.ZodType<Prisma.LeadUpdateWithoutCollabQuoteInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  companyName: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  projectDescription: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const LeadUncheckedUpdateWithoutCollabQuoteInputSchema: z.ZodType<Prisma.LeadUncheckedUpdateWithoutCollabQuoteInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  companyName: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  projectDescription: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const AccountCreateManyUserInputSchema: z.ZodType<Prisma.AccountCreateManyUserInput> = z.object({
@@ -3796,6 +4203,8 @@ export const LinkCreateManyCategoryInputSchema: z.ZodType<Prisma.LinkCreateManyC
   id: z.string().uuid().optional(),
   name: z.string(),
   url: z.string(),
+  instagramUrl: z.string().optional().nullable(),
+  tiktokUrl: z.string().optional().nullable(),
   order: z.number().int().optional()
 }).strict();
 
@@ -3803,6 +4212,8 @@ export const LinkUpdateWithoutCategoryInputSchema: z.ZodType<Prisma.LinkUpdateWi
   id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  instagramUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  tiktokUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   order: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   clicks: z.lazy(() => LinkClickUpdateManyWithoutLinkNestedInputSchema).optional()
 }).strict();
@@ -3811,6 +4222,8 @@ export const LinkUncheckedUpdateWithoutCategoryInputSchema: z.ZodType<Prisma.Lin
   id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  instagramUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  tiktokUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   order: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   clicks: z.lazy(() => LinkClickUncheckedUpdateManyWithoutLinkNestedInputSchema).optional()
 }).strict();
@@ -3819,6 +4232,8 @@ export const LinkUncheckedUpdateManyWithoutCategoryInputSchema: z.ZodType<Prisma
   id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  instagramUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  tiktokUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   order: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
@@ -3840,6 +4255,30 @@ export const LinkClickUncheckedUpdateWithoutLinkInputSchema: z.ZodType<Prisma.Li
 export const LinkClickUncheckedUpdateManyWithoutLinkInputSchema: z.ZodType<Prisma.LinkClickUncheckedUpdateManyWithoutLinkInput> = z.object({
   id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   datetime: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const CollabQuoteCreateManyLeadInputSchema: z.ZodType<Prisma.CollabQuoteCreateManyLeadInput> = z.object({
+  id: z.string().cuid().optional(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional()
+}).strict();
+
+export const CollabQuoteUpdateWithoutLeadInputSchema: z.ZodType<Prisma.CollabQuoteUpdateWithoutLeadInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const CollabQuoteUncheckedUpdateWithoutLeadInputSchema: z.ZodType<Prisma.CollabQuoteUncheckedUpdateWithoutLeadInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const CollabQuoteUncheckedUpdateManyWithoutLeadInputSchema: z.ZodType<Prisma.CollabQuoteUncheckedUpdateManyWithoutLeadInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 /////////////////////////////////////////
@@ -4453,6 +4892,7 @@ export const PromotionTypeFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.Promotio
 
 export const LeadFindFirstArgsSchema: z.ZodType<Prisma.LeadFindFirstArgs> = z.object({
   select: LeadSelectSchema.optional(),
+  include: LeadIncludeSchema.optional(),
   where: LeadWhereInputSchema.optional(),
   orderBy: z.union([ LeadOrderByWithRelationInputSchema.array(),LeadOrderByWithRelationInputSchema ]).optional(),
   cursor: LeadWhereUniqueInputSchema.optional(),
@@ -4463,6 +4903,7 @@ export const LeadFindFirstArgsSchema: z.ZodType<Prisma.LeadFindFirstArgs> = z.ob
 
 export const LeadFindFirstOrThrowArgsSchema: z.ZodType<Prisma.LeadFindFirstOrThrowArgs> = z.object({
   select: LeadSelectSchema.optional(),
+  include: LeadIncludeSchema.optional(),
   where: LeadWhereInputSchema.optional(),
   orderBy: z.union([ LeadOrderByWithRelationInputSchema.array(),LeadOrderByWithRelationInputSchema ]).optional(),
   cursor: LeadWhereUniqueInputSchema.optional(),
@@ -4473,6 +4914,7 @@ export const LeadFindFirstOrThrowArgsSchema: z.ZodType<Prisma.LeadFindFirstOrThr
 
 export const LeadFindManyArgsSchema: z.ZodType<Prisma.LeadFindManyArgs> = z.object({
   select: LeadSelectSchema.optional(),
+  include: LeadIncludeSchema.optional(),
   where: LeadWhereInputSchema.optional(),
   orderBy: z.union([ LeadOrderByWithRelationInputSchema.array(),LeadOrderByWithRelationInputSchema ]).optional(),
   cursor: LeadWhereUniqueInputSchema.optional(),
@@ -4500,12 +4942,76 @@ export const LeadGroupByArgsSchema: z.ZodType<Prisma.LeadGroupByArgs> = z.object
 
 export const LeadFindUniqueArgsSchema: z.ZodType<Prisma.LeadFindUniqueArgs> = z.object({
   select: LeadSelectSchema.optional(),
+  include: LeadIncludeSchema.optional(),
   where: LeadWhereUniqueInputSchema,
 }).strict() ;
 
 export const LeadFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.LeadFindUniqueOrThrowArgs> = z.object({
   select: LeadSelectSchema.optional(),
+  include: LeadIncludeSchema.optional(),
   where: LeadWhereUniqueInputSchema,
+}).strict() ;
+
+export const CollabQuoteFindFirstArgsSchema: z.ZodType<Prisma.CollabQuoteFindFirstArgs> = z.object({
+  select: CollabQuoteSelectSchema.optional(),
+  include: CollabQuoteIncludeSchema.optional(),
+  where: CollabQuoteWhereInputSchema.optional(),
+  orderBy: z.union([ CollabQuoteOrderByWithRelationInputSchema.array(),CollabQuoteOrderByWithRelationInputSchema ]).optional(),
+  cursor: CollabQuoteWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ CollabQuoteScalarFieldEnumSchema,CollabQuoteScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const CollabQuoteFindFirstOrThrowArgsSchema: z.ZodType<Prisma.CollabQuoteFindFirstOrThrowArgs> = z.object({
+  select: CollabQuoteSelectSchema.optional(),
+  include: CollabQuoteIncludeSchema.optional(),
+  where: CollabQuoteWhereInputSchema.optional(),
+  orderBy: z.union([ CollabQuoteOrderByWithRelationInputSchema.array(),CollabQuoteOrderByWithRelationInputSchema ]).optional(),
+  cursor: CollabQuoteWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ CollabQuoteScalarFieldEnumSchema,CollabQuoteScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const CollabQuoteFindManyArgsSchema: z.ZodType<Prisma.CollabQuoteFindManyArgs> = z.object({
+  select: CollabQuoteSelectSchema.optional(),
+  include: CollabQuoteIncludeSchema.optional(),
+  where: CollabQuoteWhereInputSchema.optional(),
+  orderBy: z.union([ CollabQuoteOrderByWithRelationInputSchema.array(),CollabQuoteOrderByWithRelationInputSchema ]).optional(),
+  cursor: CollabQuoteWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ CollabQuoteScalarFieldEnumSchema,CollabQuoteScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const CollabQuoteAggregateArgsSchema: z.ZodType<Prisma.CollabQuoteAggregateArgs> = z.object({
+  where: CollabQuoteWhereInputSchema.optional(),
+  orderBy: z.union([ CollabQuoteOrderByWithRelationInputSchema.array(),CollabQuoteOrderByWithRelationInputSchema ]).optional(),
+  cursor: CollabQuoteWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const CollabQuoteGroupByArgsSchema: z.ZodType<Prisma.CollabQuoteGroupByArgs> = z.object({
+  where: CollabQuoteWhereInputSchema.optional(),
+  orderBy: z.union([ CollabQuoteOrderByWithAggregationInputSchema.array(),CollabQuoteOrderByWithAggregationInputSchema ]).optional(),
+  by: CollabQuoteScalarFieldEnumSchema.array(),
+  having: CollabQuoteScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const CollabQuoteFindUniqueArgsSchema: z.ZodType<Prisma.CollabQuoteFindUniqueArgs> = z.object({
+  select: CollabQuoteSelectSchema.optional(),
+  include: CollabQuoteIncludeSchema.optional(),
+  where: CollabQuoteWhereUniqueInputSchema,
+}).strict() ;
+
+export const CollabQuoteFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.CollabQuoteFindUniqueOrThrowArgs> = z.object({
+  select: CollabQuoteSelectSchema.optional(),
+  include: CollabQuoteIncludeSchema.optional(),
+  where: CollabQuoteWhereUniqueInputSchema,
 }).strict() ;
 
 export const UserCreateArgsSchema: z.ZodType<Prisma.UserCreateArgs> = z.object({
@@ -4958,11 +5464,13 @@ export const PromotionTypeDeleteManyArgsSchema: z.ZodType<Prisma.PromotionTypeDe
 
 export const LeadCreateArgsSchema: z.ZodType<Prisma.LeadCreateArgs> = z.object({
   select: LeadSelectSchema.optional(),
+  include: LeadIncludeSchema.optional(),
   data: z.union([ LeadCreateInputSchema,LeadUncheckedCreateInputSchema ]),
 }).strict() ;
 
 export const LeadUpsertArgsSchema: z.ZodType<Prisma.LeadUpsertArgs> = z.object({
   select: LeadSelectSchema.optional(),
+  include: LeadIncludeSchema.optional(),
   where: LeadWhereUniqueInputSchema,
   create: z.union([ LeadCreateInputSchema,LeadUncheckedCreateInputSchema ]),
   update: z.union([ LeadUpdateInputSchema,LeadUncheckedUpdateInputSchema ]),
@@ -4980,11 +5488,13 @@ export const LeadCreateManyAndReturnArgsSchema: z.ZodType<Prisma.LeadCreateManyA
 
 export const LeadDeleteArgsSchema: z.ZodType<Prisma.LeadDeleteArgs> = z.object({
   select: LeadSelectSchema.optional(),
+  include: LeadIncludeSchema.optional(),
   where: LeadWhereUniqueInputSchema,
 }).strict() ;
 
 export const LeadUpdateArgsSchema: z.ZodType<Prisma.LeadUpdateArgs> = z.object({
   select: LeadSelectSchema.optional(),
+  include: LeadIncludeSchema.optional(),
   data: z.union([ LeadUpdateInputSchema,LeadUncheckedUpdateInputSchema ]),
   where: LeadWhereUniqueInputSchema,
 }).strict() ;
@@ -4996,4 +5506,50 @@ export const LeadUpdateManyArgsSchema: z.ZodType<Prisma.LeadUpdateManyArgs> = z.
 
 export const LeadDeleteManyArgsSchema: z.ZodType<Prisma.LeadDeleteManyArgs> = z.object({
   where: LeadWhereInputSchema.optional(),
+}).strict() ;
+
+export const CollabQuoteCreateArgsSchema: z.ZodType<Prisma.CollabQuoteCreateArgs> = z.object({
+  select: CollabQuoteSelectSchema.optional(),
+  include: CollabQuoteIncludeSchema.optional(),
+  data: z.union([ CollabQuoteCreateInputSchema,CollabQuoteUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const CollabQuoteUpsertArgsSchema: z.ZodType<Prisma.CollabQuoteUpsertArgs> = z.object({
+  select: CollabQuoteSelectSchema.optional(),
+  include: CollabQuoteIncludeSchema.optional(),
+  where: CollabQuoteWhereUniqueInputSchema,
+  create: z.union([ CollabQuoteCreateInputSchema,CollabQuoteUncheckedCreateInputSchema ]),
+  update: z.union([ CollabQuoteUpdateInputSchema,CollabQuoteUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const CollabQuoteCreateManyArgsSchema: z.ZodType<Prisma.CollabQuoteCreateManyArgs> = z.object({
+  data: z.union([ CollabQuoteCreateManyInputSchema,CollabQuoteCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const CollabQuoteCreateManyAndReturnArgsSchema: z.ZodType<Prisma.CollabQuoteCreateManyAndReturnArgs> = z.object({
+  data: z.union([ CollabQuoteCreateManyInputSchema,CollabQuoteCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const CollabQuoteDeleteArgsSchema: z.ZodType<Prisma.CollabQuoteDeleteArgs> = z.object({
+  select: CollabQuoteSelectSchema.optional(),
+  include: CollabQuoteIncludeSchema.optional(),
+  where: CollabQuoteWhereUniqueInputSchema,
+}).strict() ;
+
+export const CollabQuoteUpdateArgsSchema: z.ZodType<Prisma.CollabQuoteUpdateArgs> = z.object({
+  select: CollabQuoteSelectSchema.optional(),
+  include: CollabQuoteIncludeSchema.optional(),
+  data: z.union([ CollabQuoteUpdateInputSchema,CollabQuoteUncheckedUpdateInputSchema ]),
+  where: CollabQuoteWhereUniqueInputSchema,
+}).strict() ;
+
+export const CollabQuoteUpdateManyArgsSchema: z.ZodType<Prisma.CollabQuoteUpdateManyArgs> = z.object({
+  data: z.union([ CollabQuoteUpdateManyMutationInputSchema,CollabQuoteUncheckedUpdateManyInputSchema ]),
+  where: CollabQuoteWhereInputSchema.optional(),
+}).strict() ;
+
+export const CollabQuoteDeleteManyArgsSchema: z.ZodType<Prisma.CollabQuoteDeleteManyArgs> = z.object({
+  where: CollabQuoteWhereInputSchema.optional(),
 }).strict() ;

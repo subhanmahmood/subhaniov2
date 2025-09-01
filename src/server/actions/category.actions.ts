@@ -27,6 +27,8 @@ export const getCategoryWithLinksAction = authenticatedAction.createServerAction
         id: z.string(),
         name: z.string(),
         url: z.string(),
+        instagramUrl: z.string().nullable(),
+        tiktokUrl: z.string().nullable(),
         order: z.number(),
         categoryId: z.string()
     }))
@@ -76,6 +78,8 @@ export const getCategoriesWithLinksAction = createServerAction().input(z.object(
         id: z.string(),
         name: z.string(),
         url: z.string(),
+        instagramUrl: z.string().nullable(),
+        tiktokUrl: z.string().nullable(),
         order: z.number(),
         categoryId: z.string()
     }))

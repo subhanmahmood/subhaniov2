@@ -43,6 +43,8 @@ export const getLinksAction = createServerAction().input(z.object({
     id: z.string(),
     name: z.string(),
     url: z.string(),
+    instagramUrl: z.string().nullable(),
+    tiktokUrl: z.string().nullable(),
     categoryId: z.string(),
     order: z.number()
 }))).handler(async ({ input }) => {
@@ -72,6 +74,8 @@ export const getLinkAction = createServerAction().input(z.object({
     id: z.string(),
     name: z.string(),
     url: z.string(),
+    instagramUrl: z.string().nullable(),
+    tiktokUrl: z.string().nullable(),
     categoryId: z.string(),
     order: z.number(),
 }).nullable()).handler(async ({ input }) => {

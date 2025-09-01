@@ -1,27 +1,24 @@
 import { auth } from "@/auth";
-import { SignOutButton } from "@/components/auth/auth-buttons";
-import LinksPage, { type Platform } from "@/app/links/shared";
-import { Button } from "@/components/ui/button";
+import LinksPage from "../shared";
 import { getCategoriesWithLinksAction } from "@/server/actions/category.actions";
-import { Edit, Plus } from "lucide-react";
-import Link from "next/link";
 import { redirect } from "next/navigation";
+import { SignOutButton } from "@/components/auth/auth-buttons";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Edit, Plus } from "lucide-react";
 
-export default async function Links() {
-
+export default async function LinksIG() {
     const session = await auth()
-
-    const [categoriesWithLinks] = await getCategoriesWithLinksAction({});
+    const [categoriesWithLinks] = await getCategoriesWithLinksAction({})
 
     if (!categoriesWithLinks) {
-        redirect('/links');
+        redirect('/links')
     }
 
     return <>
         <div className="flex justify-between items-center">
             <h1 className="text-lg font-semibold">Hi, I&apos;m Subhan</h1>
             <div className="flex gap-2 items-center">
-                {/* <ThemeToggle /> */}
                 {session &&
                     <>
                         <Link prefetch={true} href="/admin/links"><Button variant={'outline'}>Admin</Button></Link>
@@ -37,6 +34,8 @@ export default async function Links() {
                 <Link prefetch={true} href="/admin/categories/edit" className="w-1/2"><Button className="flex items-center gap-2 w-full" variant={'outline'}><Edit className="w-4 h-4" /> Edit Categories</Button></Link>
             </div>
         }
-        <LinksPage platform={"default" satisfies Platform} session={session} categoriesWithLinks={categoriesWithLinks} />
+        <LinksPage platform="instagram" session={session} categoriesWithLinks={categoriesWithLinks} />
     </>
 }
+
+

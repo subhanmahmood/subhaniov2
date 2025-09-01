@@ -5,6 +5,8 @@ export type Nullable<T> = T | null;
 export const linkFormSchema = z.object({
     name: z.string().min(1),
     url: z.string().min(1),
+    instagramUrl: z.string().optional().nullable(),
+    tiktokUrl: z.string().optional().nullable(),
     categoryId: z.string().optional(),
     addCategory: z.string().optional()
 })
