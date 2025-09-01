@@ -104,6 +104,8 @@ model Link {
   id         String      @id @default(uuid())
   name       String
   url        String
+  instagramUrl String?
+  tiktokUrl    String?
   categoryId String
   order      Int         @default(autoincrement())
   category   Category    @relation(fields: [categoryId], references: [id], onDelete: Cascade)

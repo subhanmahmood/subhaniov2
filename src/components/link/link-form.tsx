@@ -38,6 +38,8 @@ export default function LinkForm({ id, link, categories }: { id?: string, link?:
         defaultValues: {
             name: '',
             url: '',
+            instagramUrl: '',
+            tiktokUrl: '',
             categoryId: '',
             addCategory: ''
         },
@@ -45,7 +47,14 @@ export default function LinkForm({ id, link, categories }: { id?: string, link?:
 
     useEffect(() => {
         if (link) {
-            form.reset(link)
+            form.reset({
+                name: link.name,
+                url: link.url,
+                instagramUrl: link.instagramUrl ?? '',
+                tiktokUrl: link.tiktokUrl ?? '',
+                categoryId: link.categoryId ?? '',
+                addCategory: ''
+            })
         }
     }, [link, form])
 
@@ -89,6 +98,22 @@ export default function LinkForm({ id, link, categories }: { id?: string, link?:
                     <FormLabel>URL</FormLabel>
                     <FormControl>
                         <Input placeholder='URL' {...field} />
+                    </FormControl>
+                </FormItem>
+            )} />
+            <FormField control={form.control} name="instagramUrl" render={({ field }) => (
+                <FormItem>
+                    <FormLabel>Instagram URL (optional)</FormLabel>
+                    <FormControl>
+                        <Input placeholder='https://...' {...field} value={field.value ?? ''} />
+                    </FormControl>
+                </FormItem>
+            )} />
+            <FormField control={form.control} name="tiktokUrl" render={({ field }) => (
+                <FormItem>
+                    <FormLabel>TikTok URL (optional)</FormLabel>
+                    <FormControl>
+                        <Input placeholder='https://...' {...field} value={field.value ?? ''} />
                     </FormControl>
                 </FormItem>
             )} />

@@ -76,6 +76,7 @@ export const getCategoriesWithLinksUseCase = async ({ includeEmpty }: { includeE
                 orderBy: {
                     order: 'asc'
                 }
+                
             }
         },
         orderBy: {

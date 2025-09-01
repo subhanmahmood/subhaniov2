@@ -11,6 +11,8 @@ export const updateLinkUseCase = async (id: string, values: z.infer<typeof linkF
     const valuesToAdd: Partial<Link> = {
         name: values.name,
         url: values.url,
+        instagramUrl: values.instagramUrl,
+        tiktokUrl: values.tiktokUrl,
         categoryId,
     }
 
@@ -23,6 +25,8 @@ export const createLinkUseCase = async (values: z.infer<typeof linkFormSchema>) 
     const valuesToAdd = {
         name: values.name,
         url: values.url,
+        instagramUrl: values.instagramUrl,
+        tiktokUrl: values.tiktokUrl,
         categoryId,
     }
 
